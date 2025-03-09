@@ -1,4 +1,4 @@
-package com.projects.shortify_backend.Encoder;
+package com.projects.shortify_backend.encoder;
 
 import java.util.Random;
 

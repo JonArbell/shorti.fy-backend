@@ -1,6 +1,6 @@
 package com.projects.shortify_backend.services;
 
-import com.projects.shortify_backend.Encoder.Base62Encoder;
+import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.dto.SendUrl;
 import com.projects.shortify_backend.repository.Repo;
 import lombok.RequiredArgsConstructor;
