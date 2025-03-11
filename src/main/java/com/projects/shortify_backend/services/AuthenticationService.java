@@ -51,7 +51,6 @@ public class AuthenticationService {
                 .build();
     }
 
-
     @Transactional
     public SignUpResponseDTO signUp(SignUpRequestDTO request) {
 
@@ -60,6 +59,7 @@ public class AuthenticationService {
         }
 
         var newUser = User.builder()
+                .role("USER")
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .username(request.getUsername())

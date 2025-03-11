@@ -16,6 +16,8 @@ public class URL {
 
     private String originalUrl;
     private String shortCode;
+    private Long numOfClicked;
+    private boolean isExpired;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
