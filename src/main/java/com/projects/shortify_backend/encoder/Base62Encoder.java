@@ -14,7 +14,7 @@ public class Base62Encoder {
 
         var shortUrl = sb.reverse().toString();
 
-        while (shortUrl.length() < 5) {
+        while (shortUrl.length() < 3) {
 
             shortUrl = BASE62.charAt(new Random().nextInt(62)) + shortUrl;
         }
