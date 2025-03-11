@@ -5,12 +5,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class JwtService {
 
+//    private final JwtEncoder jwtEncoder;
+//    private final JwtEncoder jwtDecoder;
 
     public String generateToken(Authentication authentication) {
         return "";
     }
-
-//    private final JwtEncoder jwtEncoder;
-//    private final JwtEncoder jwtDecoder;
 
 }
