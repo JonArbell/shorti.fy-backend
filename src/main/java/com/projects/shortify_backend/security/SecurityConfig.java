@@ -33,7 +33,7 @@ public class SecurityConfig {
         return security.authorizeHttpRequests(auth -> auth
                         .requestMatchers(publicEndpoints)
                         .permitAll()
-                        .requestMatchers("/api/authenticated/**")
+                        .anyRequest()
                         .authenticated()
                 )
                 .oauth2ResourceServer(resource ->
