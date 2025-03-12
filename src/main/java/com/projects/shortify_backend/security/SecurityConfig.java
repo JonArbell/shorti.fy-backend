@@ -1,7 +1,6 @@
 package com.projects.shortify_backend.security;
 
 import com.projects.shortify_backend.security.jwt.JwtFilter;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,32 +13,38 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity security, AuthenticationManager authenticationManager,
-                                           JwtFilter jwtFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity security, JwtFilter jwtFilter) throws Exception {
+
+        var publicEndpoints = new OrRequestMatcher(
+                new AntPathRequestMatcher("/api/authentication/**"),
+                new AntPathRequestMatcher("/oauth2/**"),
+                new AntPathRequestMatcher("/oauth2/authorization/**"),
+                new AntPathRequestMatcher("/h2-console/**")
+        );
 
         return security.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/authentication/**")
+                        .requestMatchers(publicEndpoints)
                         .permitAll()
-                        .requestMatchers("/h2-console/**")
-                        .permitAll()
-                        .anyRequest()
+                        .requestMatchers("/api/authenticated/**")
                         .authenticated()
                 )
+                .oauth2ResourceServer(resource ->
+                        resource.jwt(Customizer.withDefaults()))
                 .cors(Customizer.withDefaults())
-                .authenticationManager(authenticationManager)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .headers(head -> head.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sm -> sm
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
 

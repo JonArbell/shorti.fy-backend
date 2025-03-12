@@ -33,7 +33,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         if (!passwordEncoder.matches(password, userDetails.getPassword()))
             throw new BadCredentialsException("Wrong password");
 
-        var authenticatedUser = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        var authenticatedUser = new UsernamePasswordAuthenticationToken(userDetails, password, userDetails.getAuthorities());
 
         log.info("Authentication : {}",authenticatedUser);
 

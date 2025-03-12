@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/authenticated")
 @RequiredArgsConstructor
-public class ShortenUrlController {
+public class UrlController {
 
     private final UrlService urlService;
 
