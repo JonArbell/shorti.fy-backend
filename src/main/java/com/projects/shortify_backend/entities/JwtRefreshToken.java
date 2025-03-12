@@ -1,15 +1,16 @@
 package com.projects.shortify_backend.entities;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
+
 import java.time.Instant;
 
 @Data
 @Builder
 @Entity
 @Table(name = "Jwt_Refresh_Tokens")
+@AllArgsConstructor
+@NoArgsConstructor
 public class JwtRefreshToken {
 
     @Id

@@ -31,18 +31,6 @@ public class AuthenticationController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<JwtRefreshTokenResponse> refreshToken(){
-
-        var response = JwtRefreshTokenResponse.builder()
-                .id(1L)
-                .jwtToken("")
-                .userId(2L)
-                .expiryDate(Instant.now())
-                .build();
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequestDTO signUp){
