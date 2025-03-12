@@ -10,6 +10,7 @@ import java.util.List;
 public class LoginResponseDTO {
 
     private String jwtToken;
+    private String refreshToken;
     private String firstName;
     private String lastName;
     private String email;

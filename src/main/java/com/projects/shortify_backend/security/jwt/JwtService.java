@@ -20,7 +20,7 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, Instant expiresAt) {
 
         var email = "";
 
@@ -35,10 +35,10 @@ public class JwtService {
         }
 
         var claims = JwtClaimsSet.builder()
-                .issuer("https://pea-todo-list-application.netlify.app")
+                .issuer("http://shorti-fy.netlify.app")
                 .subject(email)
                 .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plusSeconds(300))
+                .expiresAt(expiresAt)
                 .claim("scope",getAuthorities(authorities))
                 .build();
         var parameter = JwtEncoderParameters.from(claims);

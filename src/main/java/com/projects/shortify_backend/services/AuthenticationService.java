@@ -4,8 +4,10 @@ import com.projects.shortify_backend.dto.request.LoginRequestDTO;
 import com.projects.shortify_backend.dto.request.SignUpRequestDTO;
 import com.projects.shortify_backend.dto.response.LoginResponseDTO;
 import com.projects.shortify_backend.dto.response.SignUpResponseDTO;
+import com.projects.shortify_backend.entities.JwtRefreshToken;
 import com.projects.shortify_backend.entities.User;
 import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
+import com.projects.shortify_backend.repository.JwtRefreshTokenRepo;
 import com.projects.shortify_backend.repository.UserRepo;
 import com.projects.shortify_backend.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.Instant;
 import java.util.ArrayList;
 
 @Service
@@ -24,15 +27,17 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
     private final JwtService jwtService;
+    private final JwtRefreshTokenRepo jwtRefreshTokenRepo;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public LoginResponseDTO login(LoginRequestDTO request){
 
         var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword())
         );
 
-        var jwtToken = jwtService.generateToken(auth);
+        var jwtToken = jwtService.generateToken(auth, Instant.now().plusSeconds(1600));
 
         var userDetails = (UserDetails) auth.getPrincipal();
 
@@ -40,8 +45,23 @@ public class AuthenticationService {
             throw new RuntimeException("Authentication failed");
         }
 
+        var expiryDateOfRefreshToken = Instant.now().plusSeconds(3600);
+
+        var refreshToken = jwtService.generateToken(auth, expiryDateOfRefreshToken);
+
+        jwtRefreshTokenRepo.deleteByUser(user);
+
+        var createRefreshToken = JwtRefreshToken.builder()
+                .refreshToken(refreshToken)
+                .user(user)
+                .expiryDate(expiryDateOfRefreshToken)
+                .build();
+
+        var savedRefreshToken = jwtRefreshTokenRepo.save(createRefreshToken);
+
         return LoginResponseDTO
                 .builder()
+                .refreshToken(savedRefreshToken.getRefreshToken())
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .firstName(user.getFirstName())

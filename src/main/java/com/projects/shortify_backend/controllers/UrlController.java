@@ -1,6 +1,6 @@
 package com.projects.shortify_backend.controllers;
 
-import com.projects.shortify_backend.dto.SendUrl;
+import com.projects.shortify_backend.dto.request.ShortenUrlRequest;
 import com.projects.shortify_backend.services.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +19,9 @@ public class UrlController {
     private final UrlService urlService;
 
     @PostMapping("/shorten")
-    public ResponseEntity<String> shortUrl(@RequestBody @Valid SendUrl sendUrl){
+    public ResponseEntity<String> shortUrl(@RequestBody @Valid ShortenUrlRequest shortenUrlRequest){
 
-        var code = urlService.shortenUrl(sendUrl);
+        var code = urlService.shortenUrl(shortenUrlRequest);
 
         return new ResponseEntity<>(code, HttpStatus.CREATED);
     }

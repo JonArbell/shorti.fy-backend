@@ -2,7 +2,7 @@ package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.DashboardResponseDTO;
 import com.projects.shortify_backend.encoder.Base62Encoder;
-import com.projects.shortify_backend.dto.SendUrl;
+import com.projects.shortify_backend.dto.request.ShortenUrlRequest;
 import com.projects.shortify_backend.entities.URL;
 import com.projects.shortify_backend.repository.UrlRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +18,9 @@ public class UrlService {
     private final UrlRepo repository;
     private final UserService userService;
 
-    public String shortenUrl(SendUrl sendUrl){
+    public String shortenUrl(ShortenUrlRequest shortenUrlRequest){
 
-        log.info("URL : {}",sendUrl);
+        log.info("URL : {}", shortenUrlRequest);
         return Base62Encoder.encode(500);
     }
 
