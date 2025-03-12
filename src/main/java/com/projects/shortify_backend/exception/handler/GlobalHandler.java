@@ -2,7 +2,6 @@ package com.projects.shortify_backend.exception.handler;
 
 import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
 import com.projects.shortify_backend.exception.custom.UserNotFoundException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 @ControllerAdvice
 public class GlobalHandler {
 
@@ -27,10 +25,30 @@ public class GlobalHandler {
         return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Map<String, String>> usernameNotFoundExceptionHandler(UsernameNotFoundException exception){
+
+        return new ResponseEntity<>(Map.of(UsernameNotFoundException.class.getSimpleName(),exception.getMessage()),
+                HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> emailAlreadyExistsExceptionHandler(EmailAlreadyExistsException exception){
+
+        return new ResponseEntity<>(Map.of(EmailAlreadyExistsException.class.getSimpleName(),exception.getMessage()),
+                HttpStatus.FORBIDDEN);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> generalExceptionHandler(Exception ex) {
-
         return new ResponseEntity<>(Map.of(ex.getClass().getSimpleName(),ex.getLocalizedMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> userNotFoundExceptionHandler(UserNotFoundException ex) {
+
+        return new ResponseEntity<>(Map.of(UsernameNotFoundException.class.getSimpleName(),ex.getLocalizedMessage()),
+                HttpStatus.FORBIDDEN);
     }
 
 }
