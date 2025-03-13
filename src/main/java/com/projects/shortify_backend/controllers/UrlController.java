@@ -1,15 +1,15 @@
 package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.request.ShortenUrlRequest;
+import com.projects.shortify_backend.dto.response.MyUrlsResponse;
 import com.projects.shortify_backend.services.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/authenticated")
@@ -23,7 +23,15 @@ public class UrlController {
 
         var code = urlService.shortenUrl(shortenUrlRequest);
 
-        return new ResponseEntity<>(code, HttpStatus.CREATED);
+        return new ResponseEntity<>(code, HttpStatus.OK);
+    }
+
+    @GetMapping("/my-urls")
+    public ResponseEntity<List<MyUrlsResponse>> myUrls(){
+
+        var listOfUrls = urlService.getAllUrls();
+
+        return new ResponseEntity<>(listOfUrls, HttpStatus.OK);
     }
 
 }

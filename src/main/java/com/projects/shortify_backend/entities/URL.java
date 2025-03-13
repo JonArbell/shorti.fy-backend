@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
+
 @Data
 @Builder
 @Entity
@@ -15,9 +17,11 @@ public class URL {
     private Long id;
 
     private String originalUrl;
-    private String shortCode;
-    private Long numOfClicked;
+    private String shortUrl;
+    private Instant expiryDate;
     private boolean isExpired;
+    private Long currentClicked;
+    private Long maxClicked;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

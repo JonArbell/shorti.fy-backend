@@ -1,6 +1,7 @@
 package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.DashboardResponseDTO;
+import com.projects.shortify_backend.dto.response.MyUrlsResponse;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.dto.request.ShortenUrlRequest;
 import com.projects.shortify_backend.entities.URL;
@@ -8,7 +9,10 @@ import com.projects.shortify_backend.repository.UrlRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Comparator;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -33,7 +37,7 @@ public class UrlService {
         var activeUrlLinks = allUrl.stream().filter(url -> !url.isExpired()).count();
 
         var mostClickedUrl = allUrl.stream()
-                .max(Comparator.comparingLong(URL::getNumOfClicked))
+                .max(Comparator.comparingLong(URL::getCurrentClicked))
                 .map(URL::getOriginalUrl)
                 .orElse("None");
 
@@ -47,5 +51,21 @@ public class UrlService {
 
     }
 
+    @Transactional
+    public List<MyUrlsResponse> getAllUrls() {
+        return repository
+                .findAllByUserId(userService.getCurrentUser().getId())
+                .stream()
+                .map(url -> MyUrlsResponse.builder()
+                        .id(url.getId())
+                        .shortUrl(url.getShortUrl())
+                        .originalUrl(url.getOriginalUrl())
+                        .currentClicked(url.getCurrentClicked())
+                        .expiryDate(url.getExpiryDate())
+                        .isExpired(url.isExpired())
+                        .maxClicked(url.getMaxClicked())
+                        .build())
+                .toList();
 
+    }
 }
