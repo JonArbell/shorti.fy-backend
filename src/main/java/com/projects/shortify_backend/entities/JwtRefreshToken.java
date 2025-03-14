@@ -2,7 +2,6 @@ package com.projects.shortify_backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.Instant;
 
 @Data
@@ -24,7 +23,7 @@ public class JwtRefreshToken {
 
     @ToString.Exclude
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 }

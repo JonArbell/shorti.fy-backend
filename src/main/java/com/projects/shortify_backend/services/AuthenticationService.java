@@ -11,6 +11,7 @@ import com.projects.shortify_backend.repository.JwtRefreshTokenRepo;
 import com.projects.shortify_backend.repository.UserRepo;
 import com.projects.shortify_backend.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -45,19 +47,19 @@ public class AuthenticationService {
             throw new RuntimeException("Authentication failed");
         }
 
+        deleteTokenByUser(user);
+
         var expiryDateOfRefreshToken = Instant.now().plusSeconds(3600);
 
         var refreshToken = jwtService.generateToken(auth, expiryDateOfRefreshToken);
 
-        jwtRefreshTokenRepo.deleteByUser(user);
-
-        var createRefreshToken = JwtRefreshToken.builder()
-                .refreshToken(refreshToken)
-                .user(user)
-                .expiryDate(expiryDateOfRefreshToken)
-                .build();
-
-        var savedRefreshToken = jwtRefreshTokenRepo.save(createRefreshToken);
+        var savedRefreshToken = jwtRefreshTokenRepo.save(
+                JwtRefreshToken.builder()
+                        .refreshToken(refreshToken)
+                        .user(user)
+                        .expiryDate(expiryDateOfRefreshToken)
+                        .build()
+        );
 
         return LoginResponseDTO
                 .builder()
@@ -70,6 +72,12 @@ public class AuthenticationService {
                 .jwtToken(jwtToken)
                 .build();
     }
+
+    @Transactional
+    private void deleteTokenByUser(User user) {
+        jwtRefreshTokenRepo.deleteByUser(user);
+    }
+
 
     @Transactional
     public SignUpResponseDTO signUp(SignUpRequestDTO request) {
