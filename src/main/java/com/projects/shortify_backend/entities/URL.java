@@ -20,7 +20,7 @@ public class URL {
     private String shortUrl;
     private Instant expiryDate;
     private boolean isExpired;
-    private Long currentClicked;
+    private Long numberOfClicked;
     private Long maxClicked;
 
     @ManyToOne

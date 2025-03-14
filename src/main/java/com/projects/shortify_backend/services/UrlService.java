@@ -37,7 +37,7 @@ public class UrlService {
         var activeUrlLinks = allUrl.stream().filter(url -> !url.isExpired()).count();
 
         var mostClickedUrl = allUrl.stream()
-                .max(Comparator.comparingLong(URL::getCurrentClicked))
+                .max(Comparator.comparingLong(URL::getNumberOfClicked))
                 .map(URL::getOriginalUrl)
                 .orElse("None");
 
@@ -60,7 +60,7 @@ public class UrlService {
                         .id(url.getId())
                         .shortUrl(url.getShortUrl())
                         .originalUrl(url.getOriginalUrl())
-                        .currentClicked(url.getCurrentClicked())
+                        .numberOfClicked(url.getNumberOfClicked())
                         .expiryDate(url.getExpiryDate())
                         .isExpired(url.isExpired())
                         .maxClicked(url.getMaxClicked())

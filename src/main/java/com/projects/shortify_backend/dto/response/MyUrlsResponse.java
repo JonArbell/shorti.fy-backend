@@ -11,7 +11,7 @@ public class MyUrlsResponse {
     private Long id;
     private String originalUrl;
     private String shortUrl;
-    private Long currentClicked;
+    private Long numberOfClicked;
     private Long maxClicked;
     private Instant expiryDate;
     private boolean isExpired;
