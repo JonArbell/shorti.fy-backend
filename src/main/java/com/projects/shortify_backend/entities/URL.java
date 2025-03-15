@@ -21,10 +21,16 @@ public class URL {
     private Long id;
 
     private String originalUrl;
+
+    @Column(updatable = false)
     private String shortUrl;
+
     private Instant expiryDate;
+
     private boolean isExpired;
+
     private Long numberOfClicked;
+
     private Long maxClicked;
 
     @ManyToOne

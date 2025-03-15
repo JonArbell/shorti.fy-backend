@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -39,5 +40,17 @@ public class UrlController {
         return new ResponseEntity<>(listOfUrls, HttpStatus.OK);
 
     }
+
+    @DeleteMapping("/url/delete/{id}")
+    public ResponseEntity<Map<String, String>> deleteUrl(@PathVariable Long id){
+
+        log.info("ID Delete : {}",id);
+
+        var delete = urlService.deleteUrl(id);
+
+        return new ResponseEntity<>(Map.of("message",delete),HttpStatus.OK);
+
+    }
+
 
 }

@@ -11,12 +11,12 @@ public class CorsConfig implements WebMvcConfigurer{
     public void addCorsMappings(CorsRegistry registry) {
 
         registry.addMapping("/api/authentication/**")
-                .allowedOrigins("http://localhost:4200")
+                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
                 .allowedMethods("POST")
                 .maxAge(3600);
 
         registry.addMapping("/api/authenticated/**")
-                .allowedOrigins("http://localhost:4200")
+                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
                 .allowedMethods("POST","GET","PUT","DELETE")
                 .allowedHeaders("Authorization", "Content-Type")
                 .maxAge(3600);

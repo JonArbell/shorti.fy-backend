@@ -14,15 +14,37 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
 public class UrlService {
 
-    private final UrlRepo repository;
+    private final UrlRepo urlRepository;
     private final UserService userService;
 
+    @Transactional
+    public String deleteUrl(Long id){
+
+        var findUrl = urlRepository.findById(id);
+
+
+        if(findUrl.isEmpty())
+            throw new RuntimeException("");
+
+        if(!findUrl.get().getUser().getId().equals(userService.getCurrentUser().getId()))
+            throw new RuntimeException("");
+
+        urlRepository.delete(findUrl.get());
+
+        return "success";
+
+    }
+
+
+
+    @Transactional
     public ShortenUrlResponse shortenUrl(ShortenUrlRequest shortenUrlRequest){
 
         log.info("URL : {}", shortenUrlRequest);
@@ -31,16 +53,16 @@ public class UrlService {
 
         var local = "http://localhost:8080/";
 
-        var savedUrl = repository.save(
+        var savedUrl = urlRepository.save(
                             URL.builder()
-                        .originalUrl(shortenUrlRequest.getUrl())
-                        .maxClicked(100L)
-                        .expiryDate(Instant.now().plusSeconds(500))
-                        .isExpired(false)
-                        .numberOfClicked(100L)
-                        .shortUrl(local+shortUrl)
-                        .user(userService.getCurrentUser())
-                        .build()
+                                    .originalUrl(shortenUrlRequest.getUrl())
+                                    .maxClicked(100L)
+                                    .expiryDate(Instant.now().plusSeconds(500))
+                                    .isExpired(false)
+                                    .numberOfClicked(0L)
+                                    .shortUrl(local+shortUrl)
+                                    .user(userService.getCurrentUser())
+                                    .build()
         );
 
         return ShortenUrlResponse.builder()
@@ -58,7 +80,7 @@ public class UrlService {
     @Transactional
     public DashboardResponseDTO dashboard(){
 
-        var allUrl = repository.findAllByUserId(userService.getCurrentUser().getId());
+        var allUrl = urlRepository.findAllByUserId(userService.getCurrentUser().getId());
 
         var expiredUrlLinks = allUrl.stream().filter(URL::isExpired).count();
 
@@ -81,7 +103,7 @@ public class UrlService {
 
     @Transactional
     public List<MyUrlsResponse> getAllUrls() {
-        return repository
+        return urlRepository
                 .findAllByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .map(url -> MyUrlsResponse.builder()
