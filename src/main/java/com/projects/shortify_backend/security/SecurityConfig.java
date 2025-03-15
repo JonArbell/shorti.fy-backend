@@ -3,7 +3,6 @@ package com.projects.shortify_backend.security;
 import com.projects.shortify_backend.security.jwt.JwtFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -14,8 +13,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.OrRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -24,18 +21,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security, JwtFilter jwtFilter) throws Exception {
 
-        var publicEndpoints = new OrRequestMatcher(
-                new AntPathRequestMatcher("/api/authentication/**"),
-                new AntPathRequestMatcher("/oauth2/**"),
-                new AntPathRequestMatcher("/oauth2/authorization/**"),
-                new AntPathRequestMatcher("/h2-console/**")
-        );
 
         return security.authorizeHttpRequests(auth -> auth
-                        .requestMatchers(publicEndpoints)
-                        .permitAll()
-                        .anyRequest()
+                        .requestMatchers("/api/authenticated/**")
                         .authenticated()
+                        .anyRequest()
+                        .permitAll()
                 )
                 .oauth2ResourceServer(resource ->
                         resource.jwt(Customizer.withDefaults()))

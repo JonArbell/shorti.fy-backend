@@ -29,6 +29,8 @@ public class UrlService {
 
         var shortUrl = Base62Encoder.encode(userService.getCurrentUser().getId());
 
+        var local = "http://localhost:8080/";
+
         var savedUrl = repository.save(
                             URL.builder()
                         .originalUrl(shortenUrlRequest.getUrl())
@@ -36,7 +38,7 @@ public class UrlService {
                         .expiryDate(Instant.now().plusSeconds(500))
                         .isExpired(false)
                         .numberOfClicked(100L)
-                        .shortUrl(shortUrl)
+                        .shortUrl(local+shortUrl)
                         .user(userService.getCurrentUser())
                         .build()
         );
