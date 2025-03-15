@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-public class GetUrl {
+public class RedirectController {
 
     @GetMapping("/{url}")
-    public String getUrl(@PathVariable String url) {
+    public String redirectUrl(@PathVariable String url) {
         log.info("Get URL : {}", url);
 
         return "Panis";

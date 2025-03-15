@@ -3,7 +3,6 @@ package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.request.LoginRequestDTO;
 import com.projects.shortify_backend.dto.request.SignUpRequestDTO;
-import com.projects.shortify_backend.dto.response.JwtRefreshTokenResponse;
 import com.projects.shortify_backend.dto.response.LoginResponseDTO;
 import com.projects.shortify_backend.services.AuthenticationService;
 import jakarta.validation.Valid;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/authentication")
