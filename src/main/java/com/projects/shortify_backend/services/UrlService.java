@@ -2,6 +2,7 @@ package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.DashboardResponseDTO;
 import com.projects.shortify_backend.dto.response.MyUrlsResponse;
+import com.projects.shortify_backend.dto.response.ShortenUrlResponse;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.dto.request.ShortenUrlRequest;
 import com.projects.shortify_backend.entities.URL;
@@ -10,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 
@@ -22,12 +23,37 @@ public class UrlService {
     private final UrlRepo repository;
     private final UserService userService;
 
-    public String shortenUrl(ShortenUrlRequest shortenUrlRequest){
+    public ShortenUrlResponse shortenUrl(ShortenUrlRequest shortenUrlRequest){
 
         log.info("URL : {}", shortenUrlRequest);
-        return Base62Encoder.encode(500);
+
+        var shortUrl = Base62Encoder.encode(userService.getCurrentUser().getId());
+
+        var savedUrl = repository.save(
+                            URL.builder()
+                        .originalUrl(shortenUrlRequest.getUrl())
+                        .maxClicked(100L)
+                        .expiryDate(Instant.now().plusSeconds(500))
+                        .isExpired(false)
+                        .numberOfClicked(100L)
+                        .shortUrl(shortUrl)
+                        .user(userService.getCurrentUser())
+                        .build()
+        );
+
+        return ShortenUrlResponse.builder()
+                .id(savedUrl.getId())
+                .shortUrl(savedUrl.getShortUrl())
+                .originalUrl(savedUrl.getOriginalUrl())
+                .isExpired(savedUrl.isExpired())
+                .numberOfClicked(savedUrl.getNumberOfClicked())
+                .expiryDate(savedUrl.getExpiryDate())
+                .maxClicked(savedUrl.getMaxClicked())
+                .build();
+
     }
 
+    @Transactional
     public DashboardResponseDTO dashboard(){
 
         var allUrl = repository.findAllByUserId(userService.getCurrentUser().getId());
@@ -68,4 +94,5 @@ public class UrlService {
                 .toList();
 
     }
+
 }
