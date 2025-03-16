@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.response.DashboardResponseDTO;
-import com.projects.shortify_backend.services.UrlService;
+import com.projects.shortify_backend.services.DashboardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class DashboardController {
 
-    private final UrlService urlService;
+    private final DashboardService dashboardService;
 
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardResponseDTO> dashboard(){
 
-        var response = urlService.dashboard();
+        var response = dashboardService.dashboard();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
 

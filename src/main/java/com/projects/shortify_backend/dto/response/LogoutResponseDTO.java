@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LogoutResponse {
+public class LogoutResponseDTO {
 
     private String status;
     private String message;

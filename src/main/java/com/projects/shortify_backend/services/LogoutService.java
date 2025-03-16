@@ -1,6 +1,6 @@
 package com.projects.shortify_backend.services;
 
-import com.projects.shortify_backend.dto.response.LogoutResponse;
+import com.projects.shortify_backend.dto.response.LogoutResponseDTO;
 import com.projects.shortify_backend.entities.User;
 import com.projects.shortify_backend.repository.JwtRefreshTokenRepo;
 import com.projects.shortify_backend.security.jwt.JwtService;
@@ -20,7 +20,7 @@ public class LogoutService {
     private final JwtRefreshTokenRepo jwtRefreshTokenRepo;
 
     @Transactional
-    public LogoutResponse logout(String token){
+    public LogoutResponseDTO logout(String token){
 
         var email = jwtService.extractEmail(token);
 
@@ -30,10 +30,10 @@ public class LogoutService {
 
         if(userDetails instanceof User user){
             jwtRefreshTokenRepo.deleteByUser(user);
-            return new LogoutResponse("200","Successfully logout");
+            return new LogoutResponseDTO("200","Successfully logout");
         }
 
-        return new LogoutResponse("401","Failed logout");
+        return new LogoutResponseDTO("401","Failed logout");
     }
 
 

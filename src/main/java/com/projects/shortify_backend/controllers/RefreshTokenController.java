@@ -1,6 +1,6 @@
 package com.projects.shortify_backend.controllers;
 
-import com.projects.shortify_backend.dto.response.JwtRefreshTokenResponse;
+import com.projects.shortify_backend.dto.response.JwtRefreshTokenResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +17,11 @@ import java.util.Map;
 public class RefreshTokenController {
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<JwtRefreshTokenResponse> refreshToken(@RequestBody Map<String, String> map){
+    public ResponseEntity<JwtRefreshTokenResponseDTO> refreshToken(@RequestBody Map<String, String> map){
 
         log.info("Test : {}",map);
 
-        var response = JwtRefreshTokenResponse.builder()
+        var response = JwtRefreshTokenResponseDTO.builder()
                 .id(1L)
                 .jwtToken("")
                 .userId(2L)

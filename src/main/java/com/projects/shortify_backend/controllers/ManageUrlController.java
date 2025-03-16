@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
-import com.projects.shortify_backend.dto.response.MyUrlsResponse;
-import com.projects.shortify_backend.services.UrlService;
+import com.projects.shortify_backend.dto.response.MyUrlResponseDTO;
+import com.projects.shortify_backend.services.ManagerUrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,37 +16,38 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ManageUrlController {
 
-    private final UrlService urlService;
-
-    @GetMapping("/my-urls")
-    public ResponseEntity<List<MyUrlsResponse>> myUrls(){
-
-        var listOfUrls = urlService.getAllUrls();
-
-        return new ResponseEntity<>(listOfUrls, HttpStatus.OK);
-
-    }
+    private final ManagerUrlService managerUrlService;
 
     @DeleteMapping("/urls/delete/{id}")
     public ResponseEntity<Map<String, String>> deleteUrl(@PathVariable Long id){
 
         log.info("ID Delete : {}",id);
 
-        var delete = urlService.deleteUrl(id);
+        var delete = managerUrlService.deleteUrl(id);
 
         return new ResponseEntity<>(Map.of("message",delete),HttpStatus.OK);
 
     }
 
+    @GetMapping("/my-urls")
+    public ResponseEntity<List<MyUrlResponseDTO>> myUrls(){
+
+        var listOfUrls = managerUrlService.getAllUrls();
+
+        return new ResponseEntity<>(listOfUrls, HttpStatus.OK);
+
+    }
+
     @GetMapping("/urls/{id}")
-    public ResponseEntity<Map<String, String>> getUrl(@PathVariable Long id){
+    public ResponseEntity<MyUrlResponseDTO> getUrl(@PathVariable Long id){
 
         log.info("ID get : {}",id);
 
-//        var delete = urlService.deleteUrl(id);
+        var getUrl = managerUrlService.getUrl(id);
 
-        return new ResponseEntity<>(Map.of("message","getUrl"),HttpStatus.OK);
+        return new ResponseEntity<>(getUrl,HttpStatus.OK);
 
     }
+
 
 }

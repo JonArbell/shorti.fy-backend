@@ -6,7 +6,7 @@ import java.time.Instant;
 
 @Data
 @Builder
-public class MyUrlsResponse {
+public class MyUrlResponseDTO {
 
     private Long id;
     private String originalUrl;

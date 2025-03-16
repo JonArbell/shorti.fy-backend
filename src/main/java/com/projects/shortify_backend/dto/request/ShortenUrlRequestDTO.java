@@ -5,7 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.URL;
 
 @Data
-public class ShortenUrlRequest {
+public class ShortenUrlRequestDTO {
 
     @NotBlank(message = "URL cannot be blank")
     @URL(message = "Invalid URL format")

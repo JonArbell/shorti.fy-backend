@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.request.LogoutRequestDTO;
-import com.projects.shortify_backend.dto.response.LogoutResponse;
+import com.projects.shortify_backend.dto.response.LogoutResponseDTO;
 import com.projects.shortify_backend.services.LogoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class LogoutController {
     private final LogoutService logoutService;
 
     @PostMapping("/logout")
-    public ResponseEntity<LogoutResponse> logout(@RequestBody @Valid LogoutRequestDTO logout){
+    public ResponseEntity<LogoutResponseDTO> logout(@RequestBody @Valid LogoutRequestDTO logout){
 
         log.info("Logout object : {}",logout);
 

@@ -6,7 +6,7 @@ import java.time.Instant;
 
 @Data
 @Builder
-public class JwtRefreshTokenResponse {
+public class JwtRefreshTokenResponseDTO {
 
     private Long id;
 
