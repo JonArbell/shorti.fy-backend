@@ -31,6 +31,11 @@ public class PasswordResetService {
 
     public void sendCodeToEmail(String email){
 
+        var findUser = userRepo.findByEmail(email);
+
+        if(findUser.isEmpty())
+            throw new EmailNotFoundException("Can't find this email.");
+
         var generatedCode = passwordCacheService.generateCode(email);
 
         var message = new SimpleMailMessage();
