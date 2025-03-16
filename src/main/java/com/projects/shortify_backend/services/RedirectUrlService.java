@@ -2,6 +2,7 @@ package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.RedirectResponseDTO;
 import com.projects.shortify_backend.entities.Visitor;
+import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.VisitorRepo;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +33,6 @@ public class RedirectUrlService {
 
         return clientIp;
     }
-
 
 
     @Transactional
@@ -128,10 +128,7 @@ public class RedirectUrlService {
 
         }
 
-        return RedirectResponseDTO
-                .builder()
-                .responseMessage("url not found")
-                .build();
+        throw new UrlNotFoundException("URL Not Found");
     }
 
 }

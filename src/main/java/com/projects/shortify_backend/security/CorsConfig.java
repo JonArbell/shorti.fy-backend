@@ -21,6 +21,11 @@ public class CorsConfig implements WebMvcConfigurer{
                 .allowedHeaders("Authorization", "Content-Type")
                 .maxAge(3600);
 
+        registry.addMapping("/api/find-email/**")
+                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
+                .allowedMethods("GET")
+                .maxAge(3600);
+
     }
 
 }
