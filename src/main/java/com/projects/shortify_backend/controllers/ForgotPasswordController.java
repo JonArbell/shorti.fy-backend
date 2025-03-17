@@ -23,7 +23,7 @@ public class ForgotPasswordController {
 
         passwordResetService.sendCodeToEmail(email.get("email"));
 
-        return new ResponseEntity<>(Map.of("message","try"), HttpStatus.OK);
+        return new ResponseEntity<>(Map.of("message","success"), HttpStatus.OK);
     }
 
     @PostMapping("/forgot-password/{email}")
