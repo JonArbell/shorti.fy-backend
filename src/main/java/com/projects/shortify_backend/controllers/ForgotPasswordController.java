@@ -1,6 +1,8 @@
 package com.projects.shortify_backend.controllers;
 
+import com.projects.shortify_backend.dto.request.PasswordResetRequest;
 import com.projects.shortify_backend.dto.response.FindEmailResponse;
+import com.projects.shortify_backend.services.PasswordCacheService;
 import com.projects.shortify_backend.services.PasswordResetService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,7 @@ import java.util.Map;
 public class ForgotPasswordController {
 
     private final PasswordResetService passwordResetService;
-
+    private final PasswordCacheService passwordCacheService;
 
     @PostMapping("/generate-code")
     public ResponseEntity<Map<String, String>> generateCode(@RequestBody Map<String, String> email){
@@ -27,14 +29,17 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/forgot-password/{email}")
-    public ResponseEntity<Map<String, String>> compareCode(@RequestBody Map<String, String> code,
+    public ResponseEntity<Map<String, Boolean>> compareCode(@RequestBody Map<String, String> inputCode,
                                                            @PathVariable String email){
 
-        var isEqual = passwordResetService.areCodesEqual(email, code.get("code"));
+        var code = inputCode.get("code");
 
-        return new ResponseEntity<>(Map.of("message",isEqual ? "Yes equal!" : "No botoy"), HttpStatus.OK);
+        var isEqual = passwordResetService.areCodesEqual(email, code);
+
+        var isAuthorized = passwordCacheService.setAuthorization(code, isEqual);
+
+        return new ResponseEntity<>(Map.of("isAuthorized", isAuthorized), HttpStatus.OK);
     }
-
 
     @GetMapping("/find-email/{email}")
     public ResponseEntity<FindEmailResponse> findEmail(@PathVariable String email){
@@ -42,6 +47,16 @@ public class ForgotPasswordController {
         var findEmail = passwordResetService.findEmail(email);
 
         return new ResponseEntity<>(findEmail, HttpStatus.OK);
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, Boolean>> changePassword(@RequestBody PasswordResetRequest passwordResetRequest,
+                                                 @RequestParam String code){
+
+        var passwordChanged = passwordResetService.changePassword(passwordResetRequest, code);
+
+        return new ResponseEntity<>(Map.of("isPasswordChanged",passwordChanged),HttpStatus.OK);
     }
 
 

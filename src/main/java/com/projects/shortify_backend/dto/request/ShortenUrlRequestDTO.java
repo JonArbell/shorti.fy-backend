@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.URL;
 @Data
 public class ShortenUrlRequestDTO {
 
-    @NotBlank(message = "URL cannot be blank")
-    @URL(message = "Invalid URL format")
+    @NotBlank(message = "URL cannot be blank.")
+    @URL(message = "Invalid URL format.")
     private String url;
 
 }

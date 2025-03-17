@@ -1,5 +1,6 @@
 package com.projects.shortify_backend.services;
 
+import com.projects.shortify_backend.dto.request.PasswordResetRequest;
 import com.projects.shortify_backend.dto.response.FindEmailResponse;
 import com.projects.shortify_backend.exception.custom.EmailNotFoundException;
 import com.projects.shortify_backend.repository.UserRepo;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 
@@ -18,6 +20,7 @@ public class PasswordResetService {
     private final UserRepo userRepo;
     private final PasswordCacheService passwordCacheService;
     private final JavaMailSender javaMailSender;
+    private final PasswordEncoder passwordEncoder;
 
     public FindEmailResponse findEmail(String email){
 
@@ -46,6 +49,25 @@ public class PasswordResetService {
         javaMailSender.send(message);
     }
 
+    public boolean changePassword(PasswordResetRequest passwordResetRequest, String code){
+
+        var findUserByEmail = userRepo.findByEmail(passwordResetRequest.getEmail());
+
+        if(findUserByEmail.isEmpty())
+            throw new EmailNotFoundException("Email not found.");
+
+        if(passwordCacheService.isAuthorized(code)){
+
+            var updatedPassword = findUserByEmail.get();
+
+            updatedPassword.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
+
+            userRepo.save(updatedPassword);
+
+            return true;
+        }
+        return false;
+    }
 
     public boolean areCodesEqual(String email, String code){
 

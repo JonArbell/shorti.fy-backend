@@ -14,14 +14,24 @@ public class PasswordCacheService {
 
     private final SecureRandom random = new SecureRandom();
 
-    @CachePut(value = "passwordResetCodes", key = "#email")
+    @CachePut(value = "generatedCode", key = "#email")
     public String generateCode(String email) {
         return String.format("%06d", random.nextInt(1000000));
     }
 
-    @Cacheable(value = "passwordResetCodes", key = "#email")
+    @Cacheable(value = "generatedCode", key = "#email")
     public String getCode(String email) {
         return null;
+    }
+
+    @CachePut(value = "passwordToken", key = "#generatedCode")
+    public boolean setAuthorization(String generatedCode, boolean isAuthorized){
+        return isAuthorized;
+    }
+
+    @Cacheable(value = "passwordToken", key = "#generatedCode")
+    public boolean isAuthorized(String generatedCode){
+        return false;
     }
 
 }
