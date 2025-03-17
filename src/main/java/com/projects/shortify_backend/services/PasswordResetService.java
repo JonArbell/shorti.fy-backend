@@ -56,7 +56,7 @@ public class PasswordResetService {
         if(findUserByEmail.isEmpty())
             throw new EmailNotFoundException("Email not found.");
 
-        if(passwordCacheService.isAuthorized(code)){
+        if(passwordCacheService.isAuthorized(code+passwordResetRequest.getEmail())){
 
             var updatedPassword = findUserByEmail.get();
 

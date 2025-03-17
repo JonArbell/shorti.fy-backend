@@ -24,13 +24,13 @@ public class PasswordCacheService {
         return null;
     }
 
-    @CachePut(value = "passwordToken", key = "#generatedCode")
-    public boolean setAuthorization(String generatedCode, boolean isAuthorized){
+    @CachePut(value = "passwordToken", key = "#generatedCodeAndEmail")
+    public boolean setAuthorization(String generatedCodeAndEmail, boolean isAuthorized){
         return isAuthorized;
     }
 
-    @Cacheable(value = "passwordToken", key = "#generatedCode")
-    public boolean isAuthorized(String generatedCode){
+    @Cacheable(value = "passwordToken", key = "#generatedCodeAndEmail")
+    public boolean isAuthorized(String generatedCodeAndEmail){
         return false;
     }
 

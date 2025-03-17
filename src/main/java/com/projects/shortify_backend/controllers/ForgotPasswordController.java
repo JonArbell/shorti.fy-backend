@@ -36,7 +36,7 @@ public class ForgotPasswordController {
 
         var isEqual = passwordResetService.areCodesEqual(email, code);
 
-        var isAuthorized = passwordCacheService.setAuthorization(code, isEqual);
+        var isAuthorized = passwordCacheService.setAuthorization(code+email, isEqual);
 
         return new ResponseEntity<>(Map.of("isAuthorized", isAuthorized), HttpStatus.OK);
     }
@@ -50,7 +50,7 @@ public class ForgotPasswordController {
     }
 
 
-    @PostMapping("/forgot-password")
+    @PutMapping("/forgot-password")
     public ResponseEntity<Map<String, Boolean>> changePassword(@RequestBody PasswordResetRequest passwordResetRequest,
                                                  @RequestParam String code){
 
