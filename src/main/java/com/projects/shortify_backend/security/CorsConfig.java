@@ -10,20 +10,27 @@ public class CorsConfig implements WebMvcConfigurer{
     @Override
     public void addCorsMappings(CorsRegistry registry) {
 
+        var allowedOrigins = new String[]{
+                        "http://localhost:4200",
+                        "https://s-fy.netlify.app"
+                };
+
         registry.addMapping("/api/authentication/**")
-                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods("POST")
+                .allowedHeaders("Content-Type")
                 .maxAge(3600);
 
         registry.addMapping("/api/authenticated/**")
-                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
+                .allowedOrigins(allowedOrigins)
                 .allowedMethods("POST","GET","PUT","DELETE")
                 .allowedHeaders("Authorization", "Content-Type")
                 .maxAge(3600);
 
-        registry.addMapping("/api/find-email/**")
-                .allowedOrigins("http://localhost:4200","https://s-fy.netlify.app")
-                .allowedMethods("GET")
+        registry.addMapping("/api/**")
+                .allowedOrigins(allowedOrigins)
+                .allowedMethods("GET","POST")
+                .allowedHeaders("Content-Type")
                 .maxAge(3600);
 
     }
