@@ -49,7 +49,6 @@ public class ForgotPasswordController {
         return new ResponseEntity<>(findEmail, HttpStatus.OK);
     }
 
-
     @PutMapping("/forgot-password")
     public ResponseEntity<Map<String, Boolean>> changePassword(@RequestBody PasswordResetRequest passwordResetRequest,
                                                  @RequestParam String code){
