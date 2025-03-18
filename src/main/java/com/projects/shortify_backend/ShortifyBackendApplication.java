@@ -9,7 +9,9 @@ import org.springframework.cache.annotation.EnableCaching;
 public class ShortifyBackendApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(ShortifyBackendApplication.class, args);
+
 	}
 
 }

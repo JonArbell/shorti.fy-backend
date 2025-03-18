@@ -1,6 +1,5 @@
 package com.projects.shortify_backend.controllers;
 
-
 import com.projects.shortify_backend.dto.request.LoginRequestDTO;
 import com.projects.shortify_backend.dto.request.SignUpRequestDTO;
 import com.projects.shortify_backend.dto.response.LoginResponseDTO;
