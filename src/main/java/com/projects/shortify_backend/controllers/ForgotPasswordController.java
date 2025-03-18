@@ -59,5 +59,4 @@ public class ForgotPasswordController {
         return new ResponseEntity<>(Map.of("isPasswordChanged",passwordChanged),HttpStatus.OK);
     }
 
-
 }
