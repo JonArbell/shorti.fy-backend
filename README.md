@@ -4,7 +4,7 @@
 
 ## 📝 Overview
 
-Shorti.fy is a URL shortener backend built with Spring Boot and PostgreSQL, offering features like custom short URLs, expiration dates, click tracking, password protection, and QR code generation (coming soon). The backend provides a secure and efficient API for managing shortened links and user authentication.
+This repository contains the backend for Shorti.fy, a URL shortener built with Spring Boot and PostgreSQL. It provides a secure and efficient API for managing shortened links and user authentication, offering features like custom short URLs, expiration dates, click tracking, password protection, and QR code generation (coming soon).
 
 ---
 
