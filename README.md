@@ -51,17 +51,7 @@
 - Downloadable QR Codes – Users can download QR codes for easy sharing.
 
 
-#### 🛠 Technologies Used
-
-- Backend: Spring Boot (Spring Security, Spring Data JPA, JWT, OAuth2)
-
-- Database: PostgreSQL
-
-- Caching: Caffeine Cache (to optimize URL lookups and redirections)
-
-- Authentication: JWT-based authentication with Google OAuth2 support
-
----
+[//]: # (---)
 
 
 [//]: # (### 🏗️ Project Setup)
