@@ -1,10 +1,10 @@
 # 🔗 Shorti.fy - Backend (🚀 In Progress)
 
-✨ URL Shortening API with Authentication, Expiration & Security
+    ✨ URL Shortening API with Authentication, Expiration & Security
 
 ## 📝 Overview
 
-This repository contains the backend for Shorti.fy, a URL shortener built with Spring Boot and PostgreSQL. It provides a secure and efficient API for managing shortened links and user authentication, offering features like custom short URLs, expiration dates, click tracking, password protection, and QR code generation (coming soon).
+    This repository contains the backend for Shorti.fy, a URL shortener built with Spring Boot and PostgreSQL. It provides a secure and efficient API for managing shortened links and user authentication, offering features like custom short URLs, expiration dates, click tracking, password protection, and QR code generation (coming soon).
 
 ---
 
