@@ -6,6 +6,7 @@ import com.projects.shortify_backend.services.LogoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,12 @@ public class LogoutController {
 
         log.info("Logout object : {}",logout);
 
-        return new ResponseEntity<>(logoutService.logout(logout.getToken()),HttpStatus.OK);
+        var response = logoutService.logout(logout.getToken());
+
+        if(response.getStatus().equals("401"))
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 }

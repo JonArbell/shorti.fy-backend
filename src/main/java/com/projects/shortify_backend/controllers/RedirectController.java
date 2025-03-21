@@ -5,6 +5,7 @@ import com.projects.shortify_backend.services.RedirectUrlService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +34,9 @@ public class RedirectController {
         if("url expired".equals(response.getResponseMessage()))
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.FOUND)
+                .header(HttpHeaders.LOCATION, response.getOriginalUrl())
+                .build();
     }
 
 }

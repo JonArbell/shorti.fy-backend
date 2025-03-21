@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.3</version>
+		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.projects</groupId>
@@ -26,9 +26,11 @@
 		<tag/>
 		<url/>
 	</scm>
+
 	<properties>
 		<java.version>23</java.version>
 	</properties>
+
 	<dependencies>
 
 		<dependency>
@@ -36,12 +38,10 @@
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
 
-
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -63,7 +63,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -101,10 +100,15 @@
 	</dependencies>
 
 	<build>
+
 		<plugins>
+
 			<plugin>
+
 				<groupId>org.apache.maven.plugins</groupId>
+
 				<artifactId>maven-compiler-plugin</artifactId>
+
 				<configuration>
 					<annotationProcessorPaths>
 						<path>
@@ -113,6 +117,7 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
