@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class FindEmailResponse {
+public class FindEmailResponseDTO {
 
     private String email;
 

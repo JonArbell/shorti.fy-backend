@@ -8,6 +8,7 @@ import lombok.Data;
 public class LogoutResponseDTO {
 
     private String status;
+
     private String message;
 
 }

@@ -28,7 +28,7 @@ public class User implements UserDetails {
     private String password;
 
     @ToString.Exclude
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private List<URL> urlList;
 
     @ToString.Exclude

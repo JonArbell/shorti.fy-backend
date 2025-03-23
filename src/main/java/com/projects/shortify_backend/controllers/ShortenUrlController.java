@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.request.ShortenUrlRequestDTO;
-import com.projects.shortify_backend.dto.response.ShortenUrlResponse;
+import com.projects.shortify_backend.dto.response.ShortenUrlResponseDTO;
 import com.projects.shortify_backend.services.ShortenUrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class ShortenUrlController {
     private final ShortenUrlService shortenUrlService;
 
     @PostMapping("/shorten")
-    public ResponseEntity<ShortenUrlResponse> shortUrl(@RequestBody @Valid ShortenUrlRequestDTO shortenUrlRequestDTO){
+    public ResponseEntity<ShortenUrlResponseDTO> shortUrl(@RequestBody @Valid ShortenUrlRequestDTO shortenUrlRequestDTO){
 
 
         var code = shortenUrlService.shortenUrl(shortenUrlRequestDTO);

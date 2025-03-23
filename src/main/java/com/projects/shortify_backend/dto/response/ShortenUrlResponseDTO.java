@@ -7,7 +7,7 @@ import java.time.Instant;
 
 @Data
 @Builder
-public class ShortenUrlResponse {
+public class ShortenUrlResponseDTO {
 
     private Long id;
     private String shortUrl;

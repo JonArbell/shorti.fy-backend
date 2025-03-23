@@ -8,8 +8,11 @@ import lombok.Data;
 public class DashboardResponseDTO {
 
     private Long overallTotalUrlLinks;
+
     private Long totalActiveUrlLinks;
+
     private Long totalExpiredUrlLinks;
+
     private String mostClickedUrl;
 
 }

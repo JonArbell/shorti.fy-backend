@@ -28,10 +28,7 @@ public class RedirectController {
 
         var response = redirectUrl.redirectUrl(shortUrl, request,userAgent);
 
-        if("url not found".equals(response.getResponseMessage()))
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-
-        if("url expired".equals(response.getResponseMessage()))
+        if("expired".equals(response.getResponseMessage()))
             return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
 
         return ResponseEntity.status(HttpStatus.FOUND)

@@ -1,5 +1,6 @@
 package com.projects.shortify_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,13 +32,13 @@ public class URL {
 
     private Long maxClicked;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @ToString.Exclude
-    @OneToMany(mappedBy = "url", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "url", cascade = CascadeType.ALL)
     private List<Visitor> visitors;
 
 }

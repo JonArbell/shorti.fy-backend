@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
-import com.projects.shortify_backend.dto.request.PasswordResetRequest;
-import com.projects.shortify_backend.dto.response.FindEmailResponse;
+import com.projects.shortify_backend.dto.request.PasswordResetRequestDTO;
+import com.projects.shortify_backend.dto.response.FindEmailResponseDTO;
 import com.projects.shortify_backend.services.PasswordCacheService;
 import com.projects.shortify_backend.services.PasswordResetService;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class ForgotPasswordController {
     }
 
     @GetMapping("/find-email/{email}")
-    public ResponseEntity<FindEmailResponse> findEmail(@PathVariable String email){
+    public ResponseEntity<FindEmailResponseDTO> findEmail(@PathVariable String email){
 
         var findEmail = passwordResetService.findEmail(email);
 
@@ -50,10 +50,10 @@ public class ForgotPasswordController {
     }
 
     @PutMapping("/forgot-password")
-    public ResponseEntity<Map<String, Boolean>> changePassword(@RequestBody PasswordResetRequest passwordResetRequest,
+    public ResponseEntity<Map<String, Boolean>> changePassword(@RequestBody PasswordResetRequestDTO passwordResetRequestDTO,
                                                  @RequestParam String code){
 
-        var passwordChanged = passwordResetService.changePassword(passwordResetRequest, code);
+        var passwordChanged = passwordResetService.changePassword(passwordResetRequestDTO, code);
 
         return new ResponseEntity<>(Map.of("isPasswordChanged",passwordChanged),HttpStatus.OK);
     }

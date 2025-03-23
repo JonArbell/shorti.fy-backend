@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.request.ShortenUrlRequestDTO;
-import com.projects.shortify_backend.dto.response.ShortenUrlResponse;
+import com.projects.shortify_backend.dto.response.ShortenUrlResponseDTO;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.entities.URL;
 import com.projects.shortify_backend.repository.UrlRepo;
@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -21,7 +22,7 @@ public class ShortenUrlService {
 
 
     @Transactional
-    public ShortenUrlResponse shortenUrl(ShortenUrlRequestDTO shortenUrlRequestDTO){
+    public ShortenUrlResponseDTO shortenUrl(ShortenUrlRequestDTO shortenUrlRequestDTO){
 
         log.info("URL : {}", shortenUrlRequestDTO);
 
@@ -38,10 +39,11 @@ public class ShortenUrlService {
                         .numberOfClicked(0L)
                         .shortUrl(local+shortUrl)
                         .user(userService.getCurrentUser())
+                        .visitors(new ArrayList<>())
                         .build()
         );
 
-        return ShortenUrlResponse.builder()
+        return ShortenUrlResponseDTO.builder()
                 .id(savedUrl.getId())
                 .shortUrl(savedUrl.getShortUrl())
                 .originalUrl(savedUrl.getOriginalUrl())

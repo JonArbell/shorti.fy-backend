@@ -1,6 +1,5 @@
 package com.projects.shortify_backend.dto.response;
 
-import com.projects.shortify_backend.entities.URL;
 import lombok.Builder;
 import lombok.Data;
 import java.util.List;
@@ -10,11 +9,17 @@ import java.util.List;
 public class LoginResponseDTO {
 
     private String jwtToken;
+
     private String refreshToken;
+
     private String firstName;
+
     private String lastName;
+
     private String email;
+
     private String username;
-    private List<URL> urlList;
+
+    private List<UrlResponseDTO> urlList;
 
 }

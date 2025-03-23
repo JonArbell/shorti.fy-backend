@@ -1,10 +1,7 @@
 package com.projects.shortify_backend.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @Entity
@@ -32,4 +29,5 @@ public class Visitor {
     @ManyToOne
     @JoinColumn(name = "url_id")
     private URL url;
+
 }

@@ -1,7 +1,7 @@
 package com.projects.shortify_backend.services;
 
-import com.projects.shortify_backend.dto.request.PasswordResetRequest;
-import com.projects.shortify_backend.dto.response.FindEmailResponse;
+import com.projects.shortify_backend.dto.request.PasswordResetRequestDTO;
+import com.projects.shortify_backend.dto.response.FindEmailResponseDTO;
 import com.projects.shortify_backend.exception.custom.EmailNotFoundException;
 import com.projects.shortify_backend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +22,14 @@ public class PasswordResetService {
     private final JavaMailSender javaMailSender;
     private final PasswordEncoder passwordEncoder;
 
-    public FindEmailResponse findEmail(String email){
+    public FindEmailResponseDTO findEmail(String email){
 
         var findUser = userRepo.findByEmail(email);
 
         if(findUser.isEmpty())
             throw new EmailNotFoundException("Can't find this email.");
 
-        return new FindEmailResponse(findUser.get().getEmail());
+        return new FindEmailResponseDTO(findUser.get().getEmail());
     }
 
     public void sendCodeToEmail(String email){
@@ -49,18 +49,18 @@ public class PasswordResetService {
         javaMailSender.send(message);
     }
 
-    public boolean changePassword(PasswordResetRequest passwordResetRequest, String code){
+    public boolean changePassword(PasswordResetRequestDTO passwordResetRequestDTO, String code){
 
-        var findUserByEmail = userRepo.findByEmail(passwordResetRequest.getEmail());
+        var findUserByEmail = userRepo.findByEmail(passwordResetRequestDTO.getEmail());
 
         if(findUserByEmail.isEmpty())
             throw new EmailNotFoundException("Email not found.");
 
-        if(passwordCacheService.isAuthorized(code+passwordResetRequest.getEmail())){
+        if(passwordCacheService.isAuthorized(code+ passwordResetRequestDTO.getEmail())){
 
             var updatedPassword = findUserByEmail.get();
 
-            updatedPassword.setPassword(passwordEncoder.encode(passwordResetRequest.getPassword()));
+            updatedPassword.setPassword(passwordEncoder.encode(passwordResetRequestDTO.getPassword()));
 
             userRepo.save(updatedPassword);
 
