@@ -3,11 +3,15 @@ package com.projects.shortify_backend.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "VISITORS")
 public class Visitor {
 
     @Id
@@ -23,11 +27,8 @@ public class Visitor {
     @Column(nullable = false)
     private String device;
 
-    @Column(nullable = false)
-    private Long numberOfVisit;
-
-    @ManyToOne
-    @JoinColumn(name = "url_id")
-    private URL url;
+    @ToString.Exclude
+    @OneToMany(orphanRemoval = true, mappedBy = "visitor", cascade = CascadeType.ALL)
+    private Set<Visit> visits = new HashSet<>();
 
 }

@@ -17,5 +17,4 @@ public class RedirectResponseDTO {
 
     private String originalUrl;
 
-    private String responseMessage;
 }

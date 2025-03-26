@@ -1,29 +1,13 @@
 package com.projects.shortify_backend.dto.response;
 
 import com.projects.shortify_backend.dto.response.base.VisitorBaseResponseDTO;
-import lombok.Builder;
 import lombok.Data;
-import java.time.Instant;
+import lombok.experimental.SuperBuilder;
 import java.util.List;
 
+
 @Data
-@Builder
-public class UrlResponseDTO {
-
-    private Long id;
-
-    private String originalUrl;
-
-    private String shortUrl;
-
-    private Long numberOfClicked;
-
-    private Long maxClicked;
-
-    private Instant expiryDate;
-
-    private boolean isExpired;
-
+@SuperBuilder
+public class UrlResponseDTO extends UrlsResponseDTO {
     private List<VisitorBaseResponseDTO> visitors;
-
 }

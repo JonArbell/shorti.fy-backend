@@ -1,6 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.response.UrlResponseDTO;
+import com.projects.shortify_backend.dto.response.UrlsResponseDTO;
 import com.projects.shortify_backend.services.ManagerUrlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class ManageUrlController {
     }
 
     @GetMapping("/my-urls")
-    public ResponseEntity<List<UrlResponseDTO>> myUrls(){
+    public ResponseEntity<List<UrlsResponseDTO>> myUrls(){
 
         var listOfUrls = managerUrlService.getAllUrls();
 

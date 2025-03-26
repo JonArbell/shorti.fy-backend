@@ -1,11 +1,12 @@
 package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.UrlResponseDTO;
+import com.projects.shortify_backend.dto.response.UrlsResponseDTO;
 import com.projects.shortify_backend.dto.response.base.VisitorBaseResponseDTO;
-import com.projects.shortify_backend.entities.URL;
 import com.projects.shortify_backend.exception.custom.UnauthorizedAccessException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
+import com.projects.shortify_backend.repository.VisitRepo;
 import com.projects.shortify_backend.repository.VisitorRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,6 +23,7 @@ public class ManagerUrlService {
     private final UrlRepo urlRepository;
     private final VisitorRepo visitorRepo;
     private final UserService userService;
+    private final VisitRepo visitRepo;
 
     @Transactional
     public String deleteUrl(Long id){
@@ -41,12 +43,12 @@ public class ManagerUrlService {
     }
 
     @Transactional
-    public List<UrlResponseDTO> getAllUrls() {
+    public List<UrlsResponseDTO> getAllUrls() {
         return urlRepository
                 .findAllByUserId(userService.getCurrentUser().getId())
                 .stream()
                 .map(url ->
-                    UrlResponseDTO
+                        UrlsResponseDTO
                             .builder()
                             .id(url.getId())
                             .shortUrl(url.getShortUrl())
@@ -55,23 +57,10 @@ public class ManagerUrlService {
                             .expiryDate(url.getExpiryDate())
                             .isExpired(url.isExpired())
                             .maxClicked(url.getMaxClicked())
-                            .visitors(getAllVisitors(url))
                             .build()
                 )
                 .collect(Collectors.toList());
 
-    }
-
-    private List<VisitorBaseResponseDTO> getAllVisitors(URL url){
-        return url.getVisitors()
-                .stream().map(visitor -> VisitorBaseResponseDTO.builder()
-                        .id(visitor.getId())
-                        .ipAddress(visitor.getIpAddress())
-                        .location(visitor.getLocation())
-                        .numberOfVisit(visitor.getNumberOfVisit())
-                        .device(visitor.getDevice())
-                        .build())
-                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -87,6 +76,20 @@ public class ManagerUrlService {
         if(!currentUserId.equals(urlUserId))
             throw new UnauthorizedAccessException("You are not authorized to access this URL.");
 
+        //Ip, location, device, id of visitor,
+
+        var visits = visitRepo.findAllByUrl(findUrl)
+                .map(visit -> VisitorBaseResponseDTO
+                        .builder()
+                        .id(visit.getVisitor().getId())
+                        .location(visit.getVisitor().getLocation())
+                        .device(visit.getVisitor().getDevice())
+                        .ipAddress(visit.getVisitor().getIpAddress())
+                        .numberOfClicked(visit.getNumberOfVisit())
+                        .build())
+                .stream()
+                .collect(Collectors.toList());
+
         return UrlResponseDTO
                 .builder()
                 .id(findUrl.getId())
@@ -96,7 +99,7 @@ public class ManagerUrlService {
                 .expiryDate(findUrl.getExpiryDate())
                 .numberOfClicked(findUrl.getNumberOfClicked())
                 .maxClicked(findUrl.getMaxClicked())
-                .visitors(getAllVisitors(findUrl))
+                .visitors(visits)
                 .build();
 
     }

@@ -39,7 +39,6 @@ public class ShortenUrlService {
                         .numberOfClicked(0L)
                         .shortUrl(local+shortUrl)
                         .user(userService.getCurrentUser())
-                        .visitors(new ArrayList<>())
                         .build()
         );
 

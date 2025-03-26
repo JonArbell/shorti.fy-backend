@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -38,7 +40,7 @@ public class URL {
     private User user;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "url", cascade = CascadeType.ALL)
-    private List<Visitor> visitors;
+    @OneToMany(orphanRemoval = true, mappedBy = "url", cascade = CascadeType.ALL)
+    private Set<Visit> visits = new HashSet<>();
 
 }

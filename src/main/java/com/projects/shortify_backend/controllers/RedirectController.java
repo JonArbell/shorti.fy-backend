@@ -28,9 +28,6 @@ public class RedirectController {
 
         var response = redirectUrl.redirectUrl(shortUrl, request,userAgent);
 
-        if("expired".equals(response.getResponseMessage()))
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-
         return ResponseEntity.status(HttpStatus.FOUND)
                 .header(HttpHeaders.LOCATION, response.getOriginalUrl())
                 .build();

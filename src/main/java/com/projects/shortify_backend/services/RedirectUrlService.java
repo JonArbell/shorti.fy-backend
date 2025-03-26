@@ -2,9 +2,12 @@ package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.response.RedirectResponseDTO;
 import com.projects.shortify_backend.entities.URL;
+import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.entities.Visitor;
+import com.projects.shortify_backend.exception.custom.UrlExpiredException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
+import com.projects.shortify_backend.repository.VisitRepo;
 import com.projects.shortify_backend.repository.VisitorRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ public class RedirectUrlService {
 
     private final VisitorRepo visitorRepo;
     private final UrlRepo urlRepository;
+    private final VisitRepo visitRepo;
 
     private String getClientIp(HttpServletRequest request) {
         String clientIp = request.getHeader("X-Forwarded-For");
@@ -36,70 +40,52 @@ public class RedirectUrlService {
     }
 
 
+
     @Transactional
     public RedirectResponseDTO redirectUrl(String shortUrl, HttpServletRequest request, String userAgent){
 
         var local = "http://localhost:8080/";
 
-        var findShortUrl = urlRepository.findByShortUrl(local+shortUrl);
+        var url = urlRepository.findByShortUrl(local+shortUrl)
+                .orElseThrow(()-> new UrlNotFoundException("URL Not Found"));
 
-        if(findShortUrl.isPresent()){
+        if(url.isExpired())
+            throw new UrlExpiredException("The requested URL has expired.");
 
-            var url = findShortUrl.get();
+        url.setNumberOfClicked(url.getNumberOfClicked()+1);
 
-            log.info("Is Url expired ? : {}",url.isExpired());
+        if(url.getMaxClicked().equals(url.getNumberOfClicked()))
+            url.setExpired(true);
 
-            if(url.isExpired()){
-                return RedirectResponseDTO
-                        .builder()
-                        .responseMessage("expired")
-                        .build();
-            }
+        urlRepository.save(url);
 
-            var totalClicked = url.getNumberOfClicked()+1;
+        var ipAddress = getClientIp(request);
 
-            url.setNumberOfClicked(totalClicked);
+        var visitor = getOrSaveNewVisitor(userAgent, ipAddress);
 
-            if(url.getMaxClicked().equals(totalClicked))
-                url.setExpired(true);
+        var visit = visitRepo.findByUrlAndVisitor(url, visitor)
+                .orElseGet(() -> visitRepo.save(
+                        Visit.builder()
+                                .url(url)
+                                .visitor(visitor)
+                                .numberOfVisit(0L)
+                                .build()
+                ));
 
-            var savedUrl = urlRepository.save(url);
+        visit.setNumberOfVisit(visit.getNumberOfVisit()+1);
 
-            var ipAddress = getClientIp(request);
+        var savedVisit = visitRepo.save(visit);
 
-            var findVisitor = savedUrl.getVisitors()
-                    .stream().filter(visitor -> visitor.getIpAddress().equals(ipAddress))
-                    .findFirst();
-
-            if(findVisitor.isPresent()){
-
-                var getVisitor = findVisitor.get();
-
-                getVisitor.setNumberOfVisit(getVisitor.getNumberOfVisit()+1);
-
-                var updatedVisitor = visitorRepo.save(getVisitor);
-
-                log.info("Updated Visitor : {}",updatedVisitor);
-
-                return RedirectResponseDTO.builder()
-                        .maskedIpAddress(updatedVisitor.getIpAddress())
-                        .originalUrl(updatedVisitor.getUrl().getOriginalUrl())
-                        .numberOfVisit(updatedVisitor.getNumberOfVisit())
-                        .device(updatedVisitor.getDevice())
-                        .location(updatedVisitor.getLocation())
-                        .responseMessage("Saved new visitor")
-                        .build();
-
-            }
-
-            return saveNewVisitor(userAgent, ipAddress, url);
-
-        }
-
-        throw new UrlNotFoundException("URL Not Found");
+        return RedirectResponseDTO.builder()
+                .originalUrl(savedVisit.getUrl().getOriginalUrl())
+                .device(savedVisit.getVisitor().getDevice())
+                .location("Unknown location")
+                .numberOfVisit(savedVisit.getUrl().getNumberOfClicked())
+                .maskedIpAddress(savedVisit.getVisitor().getIpAddress())
+                .build();
     }
 
-    private RedirectResponseDTO saveNewVisitor(String userAgent, String ipAddress, URL url){
+    private Visitor getOrSaveNewVisitor(String userAgent, String ipAddress){
 
         final String deviceType;
 
@@ -113,26 +99,15 @@ public class RedirectUrlService {
             deviceType = "Unknown Device";
         }
 
-        var newVisitor = visitorRepo.save( // Create new visitor
-                Visitor.builder()
-                        .device(deviceType)
-                        .url(url)
-                        .ipAddress(ipAddress)
-                        .location("Unknown location")
-                        .numberOfVisit(1L)
-                        .build()
-        );
-
-        log.info("New Visitor : {}",newVisitor);
-
-        return RedirectResponseDTO.builder()
-                .maskedIpAddress(newVisitor.getIpAddress())
-                .originalUrl(newVisitor.getUrl().getOriginalUrl())
-                .numberOfVisit(newVisitor.getNumberOfVisit())
-                .device(newVisitor.getDevice())
-                .location(newVisitor.getLocation())
-                .responseMessage("Saved new visitor")
-                .build();
+        return visitorRepo.findByIpAddress(ipAddress)
+                .orElseGet(() -> visitorRepo.save( // Create new visitor
+                        Visitor.builder()
+                                .device(deviceType)
+                                .ipAddress(ipAddress)
+                                .location("Unknown location")
+                                .build()
+                        )
+                );
     }
 
 }

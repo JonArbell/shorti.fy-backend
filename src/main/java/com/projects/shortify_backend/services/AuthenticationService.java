@@ -5,12 +5,15 @@ import com.projects.shortify_backend.dto.request.SignUpRequestDTO;
 import com.projects.shortify_backend.dto.response.LoginResponseDTO;
 import com.projects.shortify_backend.dto.response.SignUpResponseDTO;
 import com.projects.shortify_backend.dto.response.UrlResponseDTO;
+import com.projects.shortify_backend.dto.response.UrlsResponseDTO;
 import com.projects.shortify_backend.dto.response.base.VisitorBaseResponseDTO;
 import com.projects.shortify_backend.entities.JwtRefreshToken;
 import com.projects.shortify_backend.entities.User;
+import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
 import com.projects.shortify_backend.repository.JwtRefreshTokenRepo;
 import com.projects.shortify_backend.repository.UserRepo;
+import com.projects.shortify_backend.repository.VisitRepo;
 import com.projects.shortify_backend.repository.VisitorRepo;
 import com.projects.shortify_backend.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -36,6 +42,7 @@ public class AuthenticationService {
     private final JwtRefreshTokenRepo jwtRefreshTokenRepo;
     private final AuthenticationManager authenticationManager;
     private final VisitorRepo visitorRepo;
+    private final VisitRepo visitRepo;
 
     @Transactional
     public LoginResponseDTO login(LoginRequestDTO request){
@@ -69,24 +76,17 @@ public class AuthenticationService {
         var urlList = user.getUrlList().stream()
                 .map(url ->{
 
-                    var visitors = visitorRepo.findAllByUrl(url)
-                            .stream().map(visitor -> VisitorBaseResponseDTO.builder()
-                                .id(visitor.getId())
-                                .ipAddress(visitor.getIpAddress())
-                                .location(visitor.getLocation())
-                                .numberOfVisit(visitor.getNumberOfVisit())
-                                .device(visitor.getDevice())
-                                .build()
-                            ).toList();
+                    var visit = visitRepo.findAllByUrl(url);
 
-                    return UrlResponseDTO.builder()
+                    System.out.println(visit);
+
+                    return UrlsResponseDTO.builder()
                             .id(url.getId())
                             .shortUrl(url.getShortUrl())
                             .originalUrl(url.getOriginalUrl())
                             .isExpired(url.isExpired())
                             .maxClicked(url.getMaxClicked())
                             .numberOfClicked(url.getNumberOfClicked())
-                            .visitors(visitors)
                             .expiryDate(url.getExpiryDate())
                             .build();
 
@@ -100,7 +100,7 @@ public class AuthenticationService {
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .urlList(urlList)
+                .urlList((List<UrlsResponseDTO>) urlList)
                 .jwtToken(jwtToken)
                 .build();
 
