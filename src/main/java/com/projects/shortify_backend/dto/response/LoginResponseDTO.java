@@ -20,6 +20,6 @@ public class LoginResponseDTO {
 
     private String username;
 
-    private List<UrlsResponseDTO> urlList;
+    private List<? extends UrlsResponseDTO> urlList;
 
 }

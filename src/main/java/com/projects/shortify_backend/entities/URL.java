@@ -6,15 +6,14 @@ import lombok.*;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
 @Builder
 @Entity
-@Table(name = "URLS")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "URLS")
 public class URL {
 
     @Id
@@ -30,9 +29,11 @@ public class URL {
 
     private boolean isExpired;
 
-    private Long numberOfClicked;
+    private Integer numberOfClicked;
 
-    private Long maxClicked;
+    private Instant timeStamp;
+
+    private Integer maxClicked;
 
     @ToString.Exclude
     @ManyToOne

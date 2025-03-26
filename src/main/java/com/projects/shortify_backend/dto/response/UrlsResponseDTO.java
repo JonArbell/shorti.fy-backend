@@ -14,9 +14,9 @@ public class UrlsResponseDTO {
 
     private String shortUrl;
 
-    private Long numberOfClicked;
+    private Integer numberOfClicked;
 
-    private Long maxClicked;
+    private Integer maxClicked;
 
     private Instant expiryDate;
 

@@ -15,5 +15,5 @@ public class VisitorBaseResponseDTO {
 
     private String device;
 
-    private Long numberOfClicked;
+    private Integer numberOfClicked;
 }

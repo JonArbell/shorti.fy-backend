@@ -13,7 +13,7 @@ public class RedirectResponseDTO {
 
     private String device;
 
-    private Long numberOfVisit;
+    private Integer numberOfVisit;
 
     private String originalUrl;
 

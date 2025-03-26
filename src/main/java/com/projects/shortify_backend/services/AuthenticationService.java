@@ -4,12 +4,9 @@ import com.projects.shortify_backend.dto.request.LoginRequestDTO;
 import com.projects.shortify_backend.dto.request.SignUpRequestDTO;
 import com.projects.shortify_backend.dto.response.LoginResponseDTO;
 import com.projects.shortify_backend.dto.response.SignUpResponseDTO;
-import com.projects.shortify_backend.dto.response.UrlResponseDTO;
 import com.projects.shortify_backend.dto.response.UrlsResponseDTO;
-import com.projects.shortify_backend.dto.response.base.VisitorBaseResponseDTO;
 import com.projects.shortify_backend.entities.JwtRefreshToken;
 import com.projects.shortify_backend.entities.User;
-import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
 import com.projects.shortify_backend.repository.JwtRefreshTokenRepo;
 import com.projects.shortify_backend.repository.UserRepo;
@@ -26,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -100,7 +94,7 @@ public class AuthenticationService {
                 .username(user.getUsername())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
-                .urlList((List<UrlsResponseDTO>) urlList)
+                .urlList(urlList)
                 .jwtToken(jwtToken)
                 .build();
 

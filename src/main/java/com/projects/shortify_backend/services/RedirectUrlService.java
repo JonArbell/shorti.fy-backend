@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -54,6 +56,8 @@ public class RedirectUrlService {
 
         url.setNumberOfClicked(url.getNumberOfClicked()+1);
 
+        url.setTimeStamp(Instant.now());
+
         if(url.getMaxClicked().equals(url.getNumberOfClicked()))
             url.setExpired(true);
 
@@ -67,8 +71,9 @@ public class RedirectUrlService {
                 .orElseGet(() -> visitRepo.save(
                         Visit.builder()
                                 .url(url)
+                                .timeStamp(Instant.now())
                                 .visitor(visitor)
-                                .numberOfVisit(0L)
+                                .numberOfVisit(0)
                                 .build()
                 ));
 

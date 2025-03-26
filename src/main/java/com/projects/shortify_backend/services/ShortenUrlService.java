@@ -33,10 +33,10 @@ public class ShortenUrlService {
         var savedUrl = urlRepository.save(
                 URL.builder()
                         .originalUrl(shortenUrlRequestDTO.getUrl())
-                        .maxClicked(5L)
+                        .maxClicked(5)
                         .expiryDate(Instant.now().plusSeconds(500))
                         .isExpired(false)
-                        .numberOfClicked(0L)
+                        .numberOfClicked(0)
                         .shortUrl(local+shortUrl)
                         .user(userService.getCurrentUser())
                         .build()

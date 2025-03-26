@@ -12,9 +12,9 @@ public class ShortenUrlResponseDTO {
     private Long id;
     private String shortUrl;
     private String originalUrl;
-    private Long maxClicked;
+    private Integer maxClicked;
     private Instant expiryDate;
     private boolean isExpired;
-    private Long numberOfClicked;
+    private Integer numberOfClicked;
 
 }
