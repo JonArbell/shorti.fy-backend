@@ -1,9 +1,7 @@
 package com.projects.shortify_backend.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;

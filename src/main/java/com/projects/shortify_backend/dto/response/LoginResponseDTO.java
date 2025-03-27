@@ -2,7 +2,6 @@ package com.projects.shortify_backend.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
-import java.util.List;
 
 @Data
 @Builder
@@ -19,7 +18,5 @@ public class LoginResponseDTO {
     private String email;
 
     private String username;
-
-    private List<? extends UrlsResponseDTO> urlList;
 
 }

@@ -7,7 +7,6 @@ import com.projects.shortify_backend.exception.custom.UnauthorizedAccessExceptio
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.VisitRepo;
-import com.projects.shortify_backend.repository.VisitorRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 public class ManagerUrlService {
 
     private final UrlRepo urlRepository;
-    private final VisitorRepo visitorRepo;
     private final UserService userService;
     private final VisitRepo visitRepo;
 
@@ -31,10 +29,10 @@ public class ManagerUrlService {
         var findUrl = urlRepository.findById(id);
 
         if(findUrl.isEmpty())
-            throw new RuntimeException("");
+            throw new UrlNotFoundException("");
 
         if(!findUrl.get().getUser().getId().equals(userService.getCurrentUser().getId()))
-            throw new RuntimeException("");
+            throw new UnauthorizedAccessException("");
 
         urlRepository.delete(findUrl.get());
 
