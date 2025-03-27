@@ -53,7 +53,7 @@ public class AuthenticationService {
             throw new RuntimeException("Authentication failed");
         }
 
-        deleteTokenByUser(user);
+        deleteRefreshTokenByUser(user);
 
         var expiryDateOfRefreshToken = Instant.now().plusSeconds(3600);
 
@@ -101,7 +101,7 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void deleteTokenByUser(User user) {
+    public void deleteRefreshTokenByUser(User user) {
         jwtRefreshTokenRepo.deleteByUser(user);
     }
 
