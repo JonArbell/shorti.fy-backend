@@ -1,8 +1,6 @@
 package com.projects.shortify_backend.exception.handler;
 
-import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
-import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
-import com.projects.shortify_backend.exception.custom.UserNotFoundException;
+import com.projects.shortify_backend.exception.custom.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,6 +22,12 @@ public class GlobalHandler {
         );
 
         return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(ForbiddenAccessException.class)
+    public ResponseEntity<Map<String, String>> forbiddenAccessExceptionHandler(ForbiddenAccessException exception){
+        return new ResponseEntity<>(Map.of(ForbiddenAccessException.class.getSimpleName(),exception.getMessage()),
+                HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)

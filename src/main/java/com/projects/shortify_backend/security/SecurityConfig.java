@@ -32,6 +32,12 @@ public class SecurityConfig {
                         resource.jwt(Customizer.withDefaults()))
                 .cors(Customizer.withDefaults())
                 .formLogin(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()) // This handles
+                        // unauthenticated access (not logged in).
+
+                        .accessDeniedHandler(new CustomAccessDeniedHandler()) //This handles authenticated but not authorized (e.g. wrong role).
+                )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .headers(head -> head.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
                 .csrf(AbstractHttpConfigurer::disable)
