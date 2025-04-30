@@ -1,5 +1,7 @@
 package com.projects.shortify_backend.controllers;
 
+import com.projects.shortify_backend.dto.SignInRequestDto;
+import com.projects.shortify_backend.dto.SignInResponseDto;
 import com.projects.shortify_backend.dto.SignupRequestDto;
 import com.projects.shortify_backend.dto.SignupResponseDto;
 import com.projects.shortify_backend.services.AuthenticationService;
@@ -22,4 +24,13 @@ public class AuthenticationController {
     public ResponseEntity<SignupResponseDto> signup(@RequestBody SignupRequestDto signup){
         return new ResponseEntity<>(authenticationService.signup(signup), HttpStatus.CREATED);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<SignInResponseDto> signIn(@RequestBody SignInRequestDto request){
+        return new ResponseEntity<>(authenticationService.signIn(request),HttpStatus.OK);
+    }
+
+
+
+
 }

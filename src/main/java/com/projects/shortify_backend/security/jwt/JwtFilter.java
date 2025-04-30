@@ -1,5 +1,6 @@
 package com.projects.shortify_backend.security.jwt;
 
+import com.projects.shortify_backend.entities.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,6 +55,10 @@ public class JwtFilter extends OncePerRequestFilter {
                     var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    var role = ((User) userDetails).getRole();
+
+                    log.info("Role : {}", role);
 
                     log.info("Authenticated or not : {}", SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
 
