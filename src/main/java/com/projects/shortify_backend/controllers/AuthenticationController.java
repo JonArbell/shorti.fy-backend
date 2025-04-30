@@ -30,7 +30,4 @@ public class AuthenticationController {
         return new ResponseEntity<>(authenticationService.signIn(request),HttpStatus.OK);
     }
 
-
-
-
 }
