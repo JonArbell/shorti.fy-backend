@@ -8,6 +8,7 @@ import lombok.Data;
 public class SignInResponseDto {
 
     private String token;
+    private String username;
     private boolean success;
     private String role;
 }

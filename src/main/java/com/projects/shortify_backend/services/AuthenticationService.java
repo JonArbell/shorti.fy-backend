@@ -67,7 +67,7 @@ public class AuthenticationService {
 
         var token = jwtService.generateToken(auth, Instant.now().plusSeconds(1600));
 
-        return new SignInResponseDto(token, true, user.getRole());
+        return new SignInResponseDto(token, user.getUsername(),true, user.getRole());
 
     }
 
