@@ -1,6 +1,7 @@
 package com.projects.shortify_backend.security.jwt;
 
 import com.projects.shortify_backend.entities.User;
+import com.projects.shortify_backend.exception.custom.UnauthorizedAccessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,9 +66,13 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }catch (JwtException e){
                 log.info("JwtException : {}",e.getMessage());
-
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"error\": \"Unauthorized: Invalid token\"}");
+                return;
             }
         }
+
         filterChain.doFilter(request, response);
 
         log.info("Security Context After doFilter: {}", SecurityContextHolder.getContext().getAuthentication());

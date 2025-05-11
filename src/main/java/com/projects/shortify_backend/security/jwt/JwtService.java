@@ -35,7 +35,7 @@ public class JwtService {
         }
 
         var claims = JwtClaimsSet.builder()
-                .issuer("http://s-fy.netlify.app")
+                .issuer("https://s-fy.netlify.app")
                 .subject(email)
                 .issuedAt(Instant.now())
                 .expiresAt(expiresAt)

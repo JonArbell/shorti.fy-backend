@@ -15,4 +15,10 @@ public class UrlResponseDto {
 
     private String originalUrl;
 
+    private Integer numberOfClicks;
+
+    private Integer totalClicked;
+
+    private boolean isActive;
+
 }

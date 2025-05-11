@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -35,6 +36,23 @@ public class UrlService {
         return urlRepo.findAllDtoByUser(user);
     }
 
+    public DashboardRequestDto dashboard(){
+
+        var allUrls = getAllUrls();
+
+        var activeUrls = allUrls.stream().filter(UrlResponseDto::isActive).count();
+
+        var mostClickedUrl = allUrls.stream().max(Comparator.comparingInt(UrlResponseDto::getTotalClicked))
+                .map(UrlResponseDto::getOriginalUrl).orElse("None");
+
+        return DashboardRequestDto.builder()
+                .totalUrlLinks((long)allUrls.size())
+                .activeUrls(activeUrls)
+                .expiredUrls((long) allUrls.size() - activeUrls)
+                .mostClickedUrl(mostClickedUrl)
+                .build();
+    }
+
     @Transactional
     public AddUrlResponseDto addUrl(AddUrlRequestDto request){
 
@@ -44,6 +62,8 @@ public class UrlService {
         var saved = urlRepo.save(
                 Url.builder()
                         .originalUrl(request.getOriginalUrl())
+                        .isActive(true)
+                        .numberOfClicks(5)
                         .shortUrl(Base62Encoder.encode(request.getOriginalUrl().length()))
                         .createdAt(LocalDateTime.now())
                         .user(user)

@@ -29,6 +29,14 @@ public class Url {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean isActive;
+
+    private Integer totalClicked;
+
+    @Column(nullable = false)
+    private Integer numberOfClicks;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
