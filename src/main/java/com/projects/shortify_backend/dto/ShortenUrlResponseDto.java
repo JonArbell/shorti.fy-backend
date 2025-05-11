@@ -5,13 +5,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DashboardRequestDto {
-    private Long totalUrlLinks;
-    private Long activeUrls;
-    private String mostClickedUrl;
-    private Long expiredUrls;
+public class ShortenUrlResponseDto {
+
+    private boolean success;
+
+    private String shortUrl;
+
+    private String originalUrl;
+
+    private LocalDateTime createdAt;
+
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -29,16 +30,18 @@ public class Url {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     private boolean isActive;
 
     private Integer totalClicked;
 
     @Column(nullable = false)
-    private Integer numberOfClicks;
+    private Integer maxClick;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "url", cascade = CascadeType.ALL)
+    private List<Visit> visits;
 
 }

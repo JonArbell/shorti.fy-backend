@@ -18,7 +18,7 @@ public class GlobalHandler {
 
         var errors = new HashMap<String, String>();
         exception.getAllErrors().forEach(error ->
-                errors.put(error.getCode()+" Error",error.getDefaultMessage())
+                errors.put("error",error.getDefaultMessage())
         );
 
         return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);

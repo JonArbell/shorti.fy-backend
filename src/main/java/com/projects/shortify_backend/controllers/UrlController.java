@@ -2,6 +2,7 @@ package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.*;
 import com.projects.shortify_backend.services.UrlService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +24,15 @@ public class UrlController {
         return new ResponseEntity<>(urlService.getAllUrls(),HttpStatus.OK);
     }
 
-    @PostMapping("/add-url")
-    public ResponseEntity<AddUrlResponseDto> addUrl(@RequestBody AddUrlRequestDto request){
+    @PostMapping("/shorten-url")
+    public ResponseEntity<ShortenUrlResponseDto> shortenUrl(@Valid @RequestBody ShortenUrlRequestDto request){
 
-        return new ResponseEntity<>(urlService.addUrl(request),HttpStatus.CREATED);
+        return new ResponseEntity<>(urlService.shortenUrl(request),HttpStatus.CREATED);
 
     }
 
     @PutMapping("/update-url")
-    public ResponseEntity<UpdateUrlResponseDto> updateUrl(@RequestBody UpdateUrlRequestDto request){
+    public ResponseEntity<UpdateUrlResponseDto> updateUrl(@Valid @RequestBody UpdateUrlRequestDto request){
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
