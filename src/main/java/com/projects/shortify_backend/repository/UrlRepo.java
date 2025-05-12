@@ -21,4 +21,7 @@ public interface UrlRepo extends JpaRepository<Url, Long> {
             "where u.user = :user")
     List<UrlResponseDto> findAllDtoByUser(@Param("user") User user);
 
+    @Query("SELECT v FROM Url v WHERE v.shortUrl = :shortUrl")
+    Optional<Url> findByShortUrl(@Param("shortUrl") String shortUrl);
+
 }
