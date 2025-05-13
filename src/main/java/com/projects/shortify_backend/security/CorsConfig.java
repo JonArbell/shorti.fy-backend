@@ -1,38 +1,65 @@
 package com.projects.shortify_backend.security;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
-public class CorsConfig implements WebMvcConfigurer{
+public class CorsConfig {
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
 
-        var allowedOrigins = new String[]{
-                        "http://localhost:4200",
-                        "https://s-fy.netlify.app"
-                };
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var source = new UrlBasedCorsConfigurationSource();
 
-        registry.addMapping("/api/authentication/**")
-                .allowedOrigins(allowedOrigins)
-                .allowedMethods("POST")
-                .allowedHeaders("Content-Type")
-                .maxAge(3600);
+        // 🔓 Public CORS config (no auth header required)
+        var publicConfig = new CorsConfiguration();
+        publicConfig.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://s-fy.netlify.app"
+        ));
+        publicConfig.setAllowedMethods(List.of("POST"));
+        publicConfig.setAllowedHeaders(List.of("Content-Type"));
 
-        registry.addMapping("/api/authenticated/**")
-                .allowedOrigins(allowedOrigins)
-                .allowedMethods("POST","GET","PUT","DELETE")
-                .allowedHeaders("Authorization", "Content-Type")
-                .maxAge(3600);
 
-        registry.addMapping("/api/**")
-                .allowedOrigins(allowedOrigins)
-                .allowedMethods("GET","POST","PUT")
-                .allowedHeaders("Content-Type")
-                .maxAge(3600);
+        // 🔐 Authenticated CORS config (needs auth header)
+        var authenticatedConfig = new CorsConfiguration();
+        authenticatedConfig.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://s-fy.netlify.app"
+        ));
 
+        authenticatedConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+        authenticatedConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+        // 🌐 Fallback for other /api endpoints
+        var generalConfig = new CorsConfiguration();
+        generalConfig.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://s-fy.netlify.app"
+        ));
+        generalConfig.setAllowedMethods(List.of("GET", "POST", "PUT"));
+        generalConfig.setAllowedHeaders(List.of("Content-Type"));
+
+        var verify = new CorsConfiguration();
+        verify.setAllowedOrigins(List.of(
+                "http://localhost:4200",
+                "https://s-fy.netlify.app"
+        ));
+        verify.setAllowedMethods(List.of("GET", "POST", "PUT","OPTIONS"));
+
+        // 🔗 Register each config per route pattern
+        source.registerCorsConfiguration("/api/authentication/**", publicConfig);
+        source.registerCorsConfiguration("/api/authenticated/**", authenticatedConfig);
+        source.registerCorsConfiguration("/api/**", generalConfig); // fallback for others
+        source.registerCorsConfiguration("/api/validate-url/**", verify);
+
+        return source;
     }
+
 
 }

@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as a parent image
-FROM maven:3.9.9-eclipse-temurin-23 AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY . .
 # Build the application, skipping tests
 RUN mvn clean package -DskipTests
 
-FROM openjdk:23
+FROM openjdk:21
 
 # Set the working directory in the container
 WORKDIR /app

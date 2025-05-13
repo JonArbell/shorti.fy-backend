@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -86,9 +87,19 @@ public class RedirectUrlService {
     private String getClientIp(HttpServletRequest request) {
         String xfHeader = request.getHeader("X-Forwarded-For");
         if (xfHeader != null && !xfHeader.isEmpty()) {
-            return xfHeader.split(",")[0]; // first IP is original client
+            return xfHeader.split(",")[0];
         }
         return request.getRemoteAddr();
+    }
+
+    public Map<String, Boolean> validateUrl(String code){
+
+        var isUrlExpired = !urlRepo.findByShortUrl(code)
+                .orElseThrow(() -> new UrlNotFoundException("Url not found."))
+                .isActive();
+
+        return Map.of("isExpired",isUrlExpired);
+
     }
 
 

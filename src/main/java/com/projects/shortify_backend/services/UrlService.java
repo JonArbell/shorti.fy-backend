@@ -89,7 +89,7 @@ public class UrlService {
                 Url.builder()
                         .originalUrl(request.getOriginalUrl())
                         .isActive(true)
-                        .maxClick(3)
+                        .maxClick(1)
                         .totalClicked(0)
                         .shortUrl(Base62Encoder.encode(request.getOriginalUrl().length()))
                         .createdAt(LocalDateTime.now())
