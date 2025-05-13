@@ -68,7 +68,7 @@ public class RedirectUrlService {
                                 Visit.builder()
                                         .url(findUrl)
                                         .visitedAt(LocalDateTime.now())
-                                        .numberOfClicks(0)
+                                        .numberOfClicks(1)
                                         .visitor(findVisitor)
                                         .build()
                         );
