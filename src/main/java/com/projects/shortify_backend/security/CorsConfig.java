@@ -50,7 +50,7 @@ public class CorsConfig {
                 "http://localhost:4200",
                 "https://s-fy.netlify.app"
         ));
-        verify.setAllowedMethods(List.of("GET", "POST", "PUT","OPTIONS"));
+        verify.setAllowedMethods(List.of("GET", "POST", "PUT"));
 
         // 🔗 Register each config per route pattern
         source.registerCorsConfiguration("/api/authentication/**", publicConfig);
