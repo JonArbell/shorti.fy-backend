@@ -16,40 +16,34 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         var source = new UrlBasedCorsConfigurationSource();
 
+        var domains = List.of(
+                "http://localhost:4200",
+                "http://192.168.110.242:4200",
+                "https://s-fy.netlify.app"
+        );
+
         // 🔓 Public CORS config (no auth header required)
         var publicConfig = new CorsConfiguration();
-        publicConfig.setAllowedOrigins(List.of(
-                "http://localhost:4200",
-                "https://s-fy.netlify.app"
-        ));
+        publicConfig.setAllowedOrigins(domains);
         publicConfig.setAllowedMethods(List.of("POST"));
         publicConfig.setAllowedHeaders(List.of("Content-Type"));
 
 
         // 🔐 Authenticated CORS config (needs auth header)
         var authenticatedConfig = new CorsConfiguration();
-        authenticatedConfig.setAllowedOrigins(List.of(
-                "http://localhost:4200",
-                "https://s-fy.netlify.app"
-        ));
+        authenticatedConfig.setAllowedOrigins(domains);
 
         authenticatedConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         authenticatedConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
         // 🌐 Fallback for other /api endpoints
         var generalConfig = new CorsConfiguration();
-        generalConfig.setAllowedOrigins(List.of(
-                "http://localhost:4200",
-                "https://s-fy.netlify.app"
-        ));
+        generalConfig.setAllowedOrigins(domains);
         generalConfig.setAllowedMethods(List.of("GET", "POST", "PUT"));
         generalConfig.setAllowedHeaders(List.of("Content-Type"));
 
         var verify = new CorsConfiguration();
-        verify.setAllowedOrigins(List.of(
-                "http://localhost:4200",
-                "https://s-fy.netlify.app"
-        ));
+        verify.setAllowedOrigins(domains);
         verify.setAllowedMethods(List.of("GET", "POST", "PUT"));
 
         // 🔗 Register each config per route pattern
