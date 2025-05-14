@@ -36,10 +36,10 @@ public class UrlController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-url")
-    public ResponseEntity<DeleteUrlResponseDto> deleteUrl(@RequestBody DeleteUrlRequestDto request){
+    @DeleteMapping("/delete-url/{id}")
+    public ResponseEntity<DeleteUrlResponseDto> deleteUrl(@PathVariable Long id){
 
-        return new ResponseEntity<>(urlService.deleteUrl(request), HttpStatus.OK);
+        return new ResponseEntity<>(urlService.deleteUrl(id), HttpStatus.OK);
     }
 
 }

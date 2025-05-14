@@ -6,6 +6,7 @@ import com.projects.shortify_backend.dto.dashboard.RecentVisitsResponseDto;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.entities.Url;
 import com.projects.shortify_backend.exception.custom.EmailNotFoundException;
+import com.projects.shortify_backend.exception.custom.UnauthorizedAccessException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.UserRepo;
@@ -37,7 +38,22 @@ public class UrlService {
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
                 .orElseThrow(() -> new EmailNotFoundException("Cannot find this email."));
 
-        return urlRepo.findAllDtoByUser(user);
+        return urlRepo.findAllDtoByUser(user)
+                .stream().peek(url -> {
+                    if(url.getTotalClicked().equals(url.getMaxClick())){
+                        url.setActive(false);
+                        urlRepo.save(url);
+                    }
+                })
+                .map(url -> UrlResponseDto.builder()
+                        .numberOfClicks(url.getMaxClick())
+                        .id(url.getId())
+                        .shortUrl(url.getShortUrl())
+                        .isActive(url.isActive())
+                        .originalUrl(url.getOriginalUrl())
+                        .totalClicked(url.getTotalClicked())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 
@@ -45,7 +61,7 @@ public class UrlService {
     public ShortenUrlResponseDto shortenUrl(ShortenUrlRequestDto request){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new EmailNotFoundException(""));
+                .orElseThrow(() -> new UnauthorizedAccessException("You're not authorized."));
 
         var saved = urlRepo.save(
                 Url.builder()
@@ -70,12 +86,12 @@ public class UrlService {
     }
 
     @Transactional
-    public DeleteUrlResponseDto deleteUrl(DeleteUrlRequestDto request) {
+    public DeleteUrlResponseDto deleteUrl(Long id) {
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
                 .orElseThrow(() -> new EmailNotFoundException("User not found"));
 
-        var url = urlRepo.findByIdAndUser(request.getId(), user)
+        var url = urlRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user"));
 
         urlRepo.delete(url);
@@ -84,15 +100,4 @@ public class UrlService {
     }
 
 
-    @Transactional
-    public Url updateStatus(Url url){
-
-        if(url.getTotalClicked().equals(url.getMaxClick())){
-            url.setActive(false);
-            return urlRepo.save(url);
-        }
-
-        return null;
-
-    }
 }
