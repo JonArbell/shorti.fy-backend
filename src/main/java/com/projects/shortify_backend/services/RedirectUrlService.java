@@ -49,7 +49,7 @@ public class RedirectUrlService {
 
         var numberOfClicks = findUrl.getTotalClicked();
 
-        var isExpired = (numberOfClicks != null) && (numberOfClicks + 1 > findUrl.getMaxClick());
+        var isExpired = numberOfClicks + 1 > findUrl.getMaxClick();
 
         if(isExpired){
             findUrl.setActive(false);

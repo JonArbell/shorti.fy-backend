@@ -2,6 +2,8 @@ package com.projects.shortify_backend.controllers;
 
 import com.projects.shortify_backend.dto.dashboard.DashboardResponseDto;
 import com.projects.shortify_backend.dto.dashboard.RecentVisitsResponseDto;
+import com.projects.shortify_backend.services.AuthenticationService;
+import com.projects.shortify_backend.services.DashboardService;
 import com.projects.shortify_backend.services.UrlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,16 +21,18 @@ public class DashboardController {
 
     private final UrlService urlService;
 
+    private final DashboardService dashboardService;
+
     @GetMapping("/dashboard")
     public ResponseEntity<DashboardResponseDto> dashboard(){
 
-        return new ResponseEntity<>(urlService.dashboard(),HttpStatus.OK);
+        return new ResponseEntity<>(dashboardService.dashboard(),HttpStatus.OK);
     }
 
     @GetMapping("/recent-visits")
     public ResponseEntity<List<RecentVisitsResponseDto>> recentVisitors(){
 
-        return new ResponseEntity<>(urlService.recentVisits(),HttpStatus.OK);
+        return new ResponseEntity<>(dashboardService.recentVisits(),HttpStatus.OK);
     }
 
 }

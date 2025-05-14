@@ -27,8 +27,6 @@ public class UrlService {
 
     private final UrlRepo urlRepo;
 
-    private final VisitRepo visitRepo;
-
     private final UserRepo userRepo;
 
     private final AuthenticationService authenticationService;
@@ -42,42 +40,6 @@ public class UrlService {
         return urlRepo.findAllDtoByUser(user);
     }
 
-    @Transactional
-    public DashboardResponseDto dashboard(){
-
-        var allUrls = getAllUrls();
-
-        var activeUrls = allUrls.stream().filter(UrlResponseDto::isActive).count();
-
-        var mostClickedUrl = allUrls.stream()
-                .filter(url -> url.getTotalClicked() != null)
-                .max(Comparator.comparingInt(UrlResponseDto::getTotalClicked))
-                .map(UrlResponseDto::getOriginalUrl).orElse("None");
-
-        return DashboardResponseDto.builder()
-                .totalUrlLinks((long) allUrls.size())
-                .activeUrls(activeUrls)
-                .expiredUrls((long) allUrls.size() - activeUrls)
-                .mostClickedUrl(mostClickedUrl)
-                .build();
-    }
-
-    @Transactional
-    public List<RecentVisitsResponseDto> recentVisits(){
-
-        return visitRepo.findTop5RecentVisitsByeEmail(authenticationService.getCurrentUserEmail(), PageRequest.of(0,5))
-                .stream()
-                .map(visit -> RecentVisitsResponseDto.builder()
-                        .id(visit.getId())
-                        .originalUrl(visit.getUrl().getOriginalUrl())
-                        .shortenedUrl(visit.getUrl().getShortUrl())
-                        .isActive(visit.getUrl().isActive())
-                        .ipAddress(visit.getVisitor().getIpAddress())
-                        .numberOfClicks(visit.getNumberOfClicks())
-                        .build())
-                .collect(Collectors.toList());
-
-    }
 
     @Transactional
     public ShortenUrlResponseDto shortenUrl(ShortenUrlRequestDto request){
@@ -122,4 +84,15 @@ public class UrlService {
     }
 
 
+    @Transactional
+    public Url updateStatus(Url url){
+
+        if(url.getTotalClicked().equals(url.getMaxClick())){
+            url.setActive(false);
+            return urlRepo.save(url);
+        }
+
+        return null;
+
+    }
 }
