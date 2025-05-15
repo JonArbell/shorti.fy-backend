@@ -18,7 +18,7 @@ public class CorsConfig {
 
         var domains = List.of(
                 "http://localhost:4200",
-                "http://192.168.110.242:4200",
+                "http://192.168.0.103:4200",
                 "https://s-fy.netlify.app"
         );
 
