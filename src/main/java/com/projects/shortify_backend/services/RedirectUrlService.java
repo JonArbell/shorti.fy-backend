@@ -1,8 +1,4 @@
 package com.projects.shortify_backend.services;
-
-import com.projects.shortify_backend.dto.UpdateUrlRequestDto;
-import com.projects.shortify_backend.dto.UpdateUrlResponseDto;
-import com.projects.shortify_backend.entities.Url;
 import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.entities.Visitor;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
@@ -14,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -49,39 +44,38 @@ public class RedirectUrlService {
         var findUrl = urlRepo.findByShortUrl(shortUrl)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found."));
 
+        var isAlreadyExpired = !findUrl.isActive();
+
+        if(isAlreadyExpired) return "expired";
+
         var numberOfClicks = findUrl.getTotalClicked();
 
-        var isExpired = numberOfClicks + 1 > findUrl.getMaxClick();
+        findUrl.setTotalClicked(numberOfClicks + 1);
 
-        if(isExpired){
-            findUrl.setActive(false);
-            urlRepo.save(findUrl);
-        }
-        else{
-            findUrl.setTotalClicked(numberOfClicks + 1);
-            urlRepo.save(findUrl);
+        if(findUrl.getTotalClicked().equals(findUrl.getMaxClick())) findUrl.setActive(false);
 
-            visitRepo.findByUrlAndVisitor(findUrl, findVisitor)
-                    .ifPresentOrElse(visit ->{
-                        visit.setNumberOfClicks(visit.getNumberOfClicks() + 1);
+        urlRepo.save(findUrl);
 
-                        visitRepo.save(visit);
-                    }, () -> visitRepo.save(
-                            Visit.builder()
-                                    .url(findUrl)
-                                    .visitedAt(LocalDateTime.now())
-                                    .numberOfClicks(1)
-                                    .visitor(findVisitor)
-                                    .build()
-                    ));
+        visitRepo.findByUrlAndVisitor(findUrl, findVisitor)
+            .ifPresentOrElse(visit ->{
+                visit.setNumberOfClicks(visit.getNumberOfClicks() + 1);
 
-        }
+                visitRepo.save(visit);
+            }, () -> visitRepo.save(
+                    Visit.builder()
+                            .url(findUrl)
+                            .visitedAt(LocalDateTime.now())
+                            .numberOfClicks(1)
+                            .visitor(findVisitor)
+                            .build()
+            ));
+
 
         log.info("Is Expired : {}", !findUrl.isActive());
 
         log.info("URL Total Clicked : {}", findUrl.getTotalClicked());
 
-        return isExpired ? "expired" : findUrl.getOriginalUrl();
+        return findUrl.getOriginalUrl();
     }
 
     private String getClientIp(HttpServletRequest request) {

@@ -22,9 +22,7 @@ import java.util.stream.Collectors;
 public class UrlService {
 
     private final UrlRepo urlRepo;
-
     private final UserRepo userRepo;
-
     private final AuthenticationService authenticationService;
 
     @Transactional
@@ -34,12 +32,7 @@ public class UrlService {
                 .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
 
         return urlRepo.findAllDtoByUser(user)
-                .stream().peek(url -> {
-                    if(url.getTotalClicked().equals(url.getMaxClick())){
-                        url.setActive(false);
-                        urlRepo.save(url);
-                    }
-                })
+                .stream()
                 .map(url -> UrlResponseDto.builder()
                         .numberOfClicks(url.getMaxClick())
                         .id(url.getId())
@@ -61,7 +54,7 @@ public class UrlService {
                 Url.builder()
                         .originalUrl(request.getOriginalUrl())
                         .isActive(true)
-                        .maxClick(1)
+                        .maxClick(3)
                         .totalClicked(0)
                         .shortUrl(Base62Encoder.encode(request.getOriginalUrl().length()))
                         .createdAt(LocalDateTime.now())

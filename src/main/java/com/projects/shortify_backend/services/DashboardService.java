@@ -46,7 +46,6 @@ public class DashboardService {
 
     @Transactional
     public List<RecentVisitsResponseDto> recentVisits(){
-        allUrls();
         return visitRepo.findTop5RecentVisitsByeEmail(authenticationService.getCurrentUserEmail(), PageRequest.of(0,5))
                 .stream()
                 .map(visit -> RecentVisitsResponseDto.builder()
