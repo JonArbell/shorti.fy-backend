@@ -1,5 +1,7 @@
 package com.projects.shortify_backend.services;
 
+import com.projects.shortify_backend.dto.UpdateUrlRequestDto;
+import com.projects.shortify_backend.dto.UpdateUrlResponseDto;
 import com.projects.shortify_backend.entities.Url;
 import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.entities.Visitor;
@@ -64,16 +66,14 @@ public class RedirectUrlService {
                         visit.setNumberOfClicks(visit.getNumberOfClicks() + 1);
 
                         visitRepo.save(visit);
-                    }, () ->{
-                        visitRepo.save(
-                                Visit.builder()
-                                        .url(findUrl)
-                                        .visitedAt(LocalDateTime.now())
-                                        .numberOfClicks(1)
-                                        .visitor(findVisitor)
-                                        .build()
-                        );
-                    });
+                    }, () -> visitRepo.save(
+                            Visit.builder()
+                                    .url(findUrl)
+                                    .visitedAt(LocalDateTime.now())
+                                    .numberOfClicks(1)
+                                    .visitor(findVisitor)
+                                    .build()
+                    ));
 
         }
 
@@ -92,6 +92,7 @@ public class RedirectUrlService {
         return request.getRemoteAddr();
     }
 
+
     public Map<String, Boolean> validateUrl(String code){
 
         var isUrlExpired = !urlRepo.findByShortUrl(code)
@@ -101,6 +102,5 @@ public class RedirectUrlService {
         return Map.of("isExpired",isUrlExpired);
 
     }
-
 
 }

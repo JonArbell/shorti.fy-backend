@@ -64,4 +64,10 @@ public class GlobalHandler {
 
     }
 
+    @ExceptionHandler(UrlExpiredException.class)
+    public ResponseEntity<Map<String, String>> urlExpiredExceptionHandler(UrlExpiredException exception){
+        return new ResponseEntity<>(Map.of(UrlExpiredException.class.getSimpleName(),exception.getMessage()),
+                HttpStatus.GONE);
+    }
+
 }

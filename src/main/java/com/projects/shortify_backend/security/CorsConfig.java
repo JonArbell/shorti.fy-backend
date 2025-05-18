@@ -11,14 +11,13 @@ import java.util.List;
 @Configuration
 public class CorsConfig {
 
-
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         var source = new UrlBasedCorsConfigurationSource();
 
         var domains = List.of(
                 "http://localhost:4200",
-                "http://192.168.0.103:4200",
+                "http://192.168.110.242:4200",
                 "https://s-fy.netlify.app"
         );
 

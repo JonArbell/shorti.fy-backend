@@ -1,23 +1,18 @@
 package com.projects.shortify_backend.services;
 
 import com.projects.shortify_backend.dto.*;
-import com.projects.shortify_backend.dto.dashboard.DashboardResponseDto;
-import com.projects.shortify_backend.dto.dashboard.RecentVisitsResponseDto;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.entities.Url;
-import com.projects.shortify_backend.exception.custom.EmailNotFoundException;
-import com.projects.shortify_backend.exception.custom.UnauthorizedAccessException;
+import com.projects.shortify_backend.exception.custom.ForbiddenAccessException;
+import com.projects.shortify_backend.exception.custom.UrlExpiredException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.UserRepo;
-import com.projects.shortify_backend.repository.VisitRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +31,7 @@ public class UrlService {
     public List<UrlResponseDto> getAllUrls(){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new EmailNotFoundException("Cannot find this email."));
+                .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
 
         return urlRepo.findAllDtoByUser(user)
                 .stream().peek(url -> {
@@ -56,12 +51,11 @@ public class UrlService {
                 .collect(Collectors.toList());
     }
 
-
     @Transactional
     public ShortenUrlResponseDto shortenUrl(ShortenUrlRequestDto request){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new UnauthorizedAccessException("You're not authorized."));
+                .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
 
         var saved = urlRepo.save(
                 Url.builder()
@@ -89,15 +83,40 @@ public class UrlService {
     public DeleteUrlResponseDto deleteUrl(Long id) {
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new EmailNotFoundException("User not found"));
+                .orElseThrow(() -> new ForbiddenAccessException("User not found."));
 
         var url = urlRepo.findByIdAndUser(id, user)
-                .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user"));
+                .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
 
         urlRepo.delete(url);
 
         return new DeleteUrlResponseDto(true);
     }
 
+    @Transactional
+    public UpdateUrlResponseDto updateUrl(UpdateUrlRequestDto update, Long id){
+
+        var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
+                .orElseThrow(() -> new ForbiddenAccessException("User not found"));
+
+        var url = urlRepo.findByIdAndUser(id, user)
+                .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
+
+        if(!url.isActive())
+            throw new UrlExpiredException("This url is already expired.");
+
+        var oldUrl = url.getOriginalUrl();
+
+        url.setOriginalUrl(update.getUpdatedUrl());
+
+        var updatedUrl = urlRepo.save(url);
+
+        return UpdateUrlResponseDto.builder()
+                .oldLongUrl(oldUrl)
+                .updatedLongUrl(updatedUrl.getOriginalUrl())
+                .message("success")
+                .build();
+
+    }
 
 }

@@ -31,9 +31,10 @@ public class UrlController {
 
     }
 
-    @PutMapping("/update-url")
-    public ResponseEntity<UpdateUrlResponseDto> updateUrl(@Valid @RequestBody UpdateUrlRequestDto request){
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/update-url/{id}")
+    public ResponseEntity<UpdateUrlResponseDto> updateUrl(@PathVariable Long id,
+                                                          @Valid @RequestBody UpdateUrlRequestDto request){
+        return new ResponseEntity<>(urlService.updateUrl(request, id),HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-url/{id}")
