@@ -16,58 +16,84 @@ public class GlobalHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String >> urlHandler(MethodArgumentNotValidException exception){
 
-        var errors = new HashMap<String, String>();
-        exception.getAllErrors().forEach(error ->
-                errors.put("error",error.getDefaultMessage())
-        );
+        var response = new HashMap<String, String>();
 
-        return new ResponseEntity<>(errors, HttpStatus.FORBIDDEN);
+        exception.getAllErrors().forEach(error ->{
+            response.put("error",error.getObjectName());
+            response.put("message", error.getDefaultMessage());
+        });
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(ForbiddenAccessException.class)
     public ResponseEntity<Map<String, String>> forbiddenAccessExceptionHandler(ForbiddenAccessException exception){
-        return new ResponseEntity<>(Map.of(ForbiddenAccessException.class.getSimpleName(),exception.getMessage()),
-                HttpStatus.FORBIDDEN);
+
+        var response = new HashMap<String, String>();
+        response.put("error", "ForbiddenAccessException");
+        response.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Map<String, String>> usernameNotFoundExceptionHandler(UsernameNotFoundException exception){
 
-        return new ResponseEntity<>(Map.of(UsernameNotFoundException.class.getSimpleName(),exception.getMessage()),
-                HttpStatus.NOT_FOUND);
+        var response = new HashMap<String, String>();
+        response.put("error", "UsernameNotFoundException");
+        response.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(EmailAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> emailAlreadyExistsExceptionHandler(EmailAlreadyExistsException exception){
 
-        return new ResponseEntity<>(Map.of(EmailAlreadyExistsException.class.getSimpleName(),exception.getMessage()),
-                HttpStatus.FORBIDDEN);
+        var response = new HashMap<String, String>();
+        response.put("error", "UnknownException");
+        response.put("message", exception.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> generalExceptionHandler(Exception ex) {
-        return new ResponseEntity<>(Map.of(ex.getClass().getSimpleName(),ex.getLocalizedMessage()),HttpStatus.BAD_REQUEST);
+
+        var response = new HashMap<String, String>();
+        response.put("error", "UnknownException");
+        response.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> userNotFoundExceptionHandler(UserNotFoundException ex) {
 
-        return new ResponseEntity<>(Map.of(UsernameNotFoundException.class.getSimpleName(),ex.getLocalizedMessage()),
-                HttpStatus.NOT_FOUND);
+        var response = new HashMap<String, String>();
+        response.put("error", "UserNotFoundException");
+        response.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UrlNotFoundException.class)
     public ResponseEntity<Map<String, String>> urlNotFoundExceptionHandler(UrlNotFoundException ex) {
 
-        return new ResponseEntity<>(Map.of(UrlNotFoundException.class.getSimpleName(),ex.getLocalizedMessage()),
-                HttpStatus.NOT_FOUND);
+        var response = new HashMap<String, String>();
+        response.put("error", "UrlNotFoundException");
+        response.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 
     }
 
     @ExceptionHandler(UrlExpiredException.class)
-    public ResponseEntity<Map<String, String>> urlExpiredExceptionHandler(UrlExpiredException exception){
-        return new ResponseEntity<>(Map.of(UrlExpiredException.class.getSimpleName(),exception.getMessage()),
-                HttpStatus.GONE);
+    public ResponseEntity<Map<String, String>> handleUrlExpiredException(UrlExpiredException ex) {
+        var response = new HashMap<String, String>();
+        response.put("error", "UrlExpiredException");
+        response.put("message", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.GONE);
     }
+
 
 }

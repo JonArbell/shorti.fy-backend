@@ -1,6 +1,7 @@
 package com.projects.shortify_backend.services;
 import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.entities.Visitor;
+import com.projects.shortify_backend.exception.custom.UrlExpiredException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.VisitRepo;
@@ -93,7 +94,9 @@ public class RedirectUrlService {
                 .orElseThrow(() -> new UrlNotFoundException("Url not found."))
                 .isActive();
 
-        return Map.of("isExpired",isUrlExpired);
+        if(isUrlExpired) throw new UrlExpiredException("This url is already expired.");
+
+        return Map.of("isExpired",false);
 
     }
 
