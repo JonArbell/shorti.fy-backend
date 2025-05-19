@@ -55,6 +55,8 @@ public class UrlService {
                         .originalUrl(request.getOriginalUrl())
                         .isActive(true)
                         .maxClick(1)
+                        .password(request.getPassword())
+                        .expirationDate(request.getExpirationDate())
                         .totalClicked(0)
                         .shortUrl(Base62Encoder.encode(request.getOriginalUrl().length()))
                         .createdAt(LocalDateTime.now())
@@ -67,6 +69,7 @@ public class UrlService {
         return ShortenUrlResponseDto.builder()
                 .originalUrl(saved.getOriginalUrl())
                 .shortUrl(saved.getShortUrl())
+                .expirationDate(saved.getExpirationDate())
                 .success(true)
                 .createdAt(saved.getCreatedAt())
                 .build();
@@ -100,7 +103,7 @@ public class UrlService {
 
         var oldUrl = url.getOriginalUrl();
 
-        url.setOriginalUrl(update.getUpdatedUrl());
+        url.setOriginalUrl(update.getOriginalUrl());
 
         var updatedUrl = urlRepo.save(url);
 
@@ -112,4 +115,20 @@ public class UrlService {
 
     }
 
+    @Transactional
+    public GetUrlResponseDto getUrlById(Long id){
+
+        var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
+                .orElseThrow(() -> new ForbiddenAccessException("User not found"));
+
+        var url = urlRepo.findByIdAndUser(id, user)
+                .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
+
+        return GetUrlResponseDto.builder()
+                .originalUrl(url.getOriginalUrl())
+                .expirationDate(url.getExpirationDate())
+                .id(url.getId())
+                .password(url.getPassword())
+                .build();
+    }
 }

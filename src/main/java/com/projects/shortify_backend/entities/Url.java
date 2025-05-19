@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,6 +36,10 @@ public class Url {
 
     @Column(nullable = false)
     private Integer maxClick;
+
+    private LocalDate expirationDate;
+
+    private String password;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 import org.hibernate.validator.constraints.URL;
+import java.time.LocalDate;
 
 @Data
 public class ShortenUrlRequestDto {
@@ -12,5 +13,9 @@ public class ShortenUrlRequestDto {
     @URL(message = "Invalid URL format")
     @Pattern(regexp = "^(https?|ftp)://[^\s/$.?#].[^\s]*$", message = "Invalid URL format") // Checks URL format
     private String originalUrl;
+
+    private String password;
+
+    private LocalDate expirationDate;
 
 }

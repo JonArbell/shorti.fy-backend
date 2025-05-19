@@ -1,17 +1,24 @@
 package com.projects.shortify_backend.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-public class UpdateUrlRequestDto {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class GetUrlResponseDto {
 
-    @NotBlank
+    private Long id;
+
     private String originalUrl;
 
     private String password;
 
     private LocalDate expirationDate;
+
 }

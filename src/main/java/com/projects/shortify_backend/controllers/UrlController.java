@@ -4,13 +4,16 @@ import com.projects.shortify_backend.dto.*;
 import com.projects.shortify_backend.services.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/authenticated")
@@ -27,6 +30,8 @@ public class UrlController {
     @PostMapping("/shorten-url")
     public ResponseEntity<ShortenUrlResponseDto> shortenUrl(@Valid @RequestBody ShortenUrlRequestDto request){
 
+        log.info("Shorten url request : {}",request);
+
         return new ResponseEntity<>(urlService.shortenUrl(request),HttpStatus.CREATED);
 
     }
@@ -41,6 +46,12 @@ public class UrlController {
     public ResponseEntity<DeleteUrlResponseDto> deleteUrl(@PathVariable Long id){
 
         return new ResponseEntity<>(urlService.deleteUrl(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/my-urls/{id}")
+    public ResponseEntity<GetUrlResponseDto> getUrlById(@PathVariable Long id){
+
+        return new ResponseEntity<>(urlService.getUrlById(id),HttpStatus.OK);
     }
 
 }
