@@ -1,6 +1,5 @@
 package com.projects.shortify_backend.repository;
 
-import com.projects.shortify_backend.dto.UrlResponseDto;
 import com.projects.shortify_backend.entities.Url;
 import com.projects.shortify_backend.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +16,8 @@ public interface UrlRepo extends JpaRepository<Url, Long> {
 
     Optional<Url> findByIdAndUser(Long id, User user);
 
-    List<Url> findAllDtoByUser(@Param("user") User user);
+    @Query("SELECT v From Url v where v.user = :user ORDER BY v.createdAt DESC")
+    List<Url> findAllUrlByUserSortedByCreatedAtDesc(@Param("user") User user);
 
     @Query("SELECT v FROM Url v WHERE v.shortUrl = :shortUrl")
     Optional<Url> findByShortUrl(@Param("shortUrl") String shortUrl);

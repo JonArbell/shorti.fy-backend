@@ -50,7 +50,7 @@ public class GlobalHandler {
     public ResponseEntity<Map<String, String>> emailAlreadyExistsExceptionHandler(EmailAlreadyExistsException exception){
 
         var response = new HashMap<String, String>();
-        response.put("error", "UnknownException");
+        response.put("error", "EmailAlreadyExistsException");
         response.put("message", exception.getMessage());
 
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);

@@ -31,7 +31,7 @@ public class UrlService {
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
                 .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
 
-        return urlRepo.findAllDtoByUser(user)
+        return urlRepo.findAllUrlByUserSortedByCreatedAtDesc(user)
                 .stream()
                 .map(url -> UrlResponseDto.builder()
                         .numberOfClicks(url.getMaxClick())
