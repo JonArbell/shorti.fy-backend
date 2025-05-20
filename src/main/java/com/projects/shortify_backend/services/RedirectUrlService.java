@@ -87,7 +87,7 @@ public class RedirectUrlService {
     }
 
     private String getDeviceType(HttpServletRequest request) {
-        String userAgentString = request.getHeader("User-Agent");
+        var userAgentString = request.getHeader("User-Agent");
         var userAgent = UserAgent.parseUserAgentString(userAgentString);
         var deviceType = userAgent.getOperatingSystem().getDeviceType();
 
@@ -101,7 +101,6 @@ public class RedirectUrlService {
         }
         return request.getRemoteAddr();
     }
-
 
     public Map<String, Boolean> validateUrl(String code){
 
