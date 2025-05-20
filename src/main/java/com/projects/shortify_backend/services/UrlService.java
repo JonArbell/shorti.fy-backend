@@ -3,9 +3,9 @@ package com.projects.shortify_backend.services;
 import com.projects.shortify_backend.dto.*;
 import com.projects.shortify_backend.encoder.Base62Encoder;
 import com.projects.shortify_backend.entities.Url;
-import com.projects.shortify_backend.exception.custom.ForbiddenAccessException;
 import com.projects.shortify_backend.exception.custom.UrlExpiredException;
 import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
+import com.projects.shortify_backend.exception.custom.UserNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class UrlService {
     public List<UrlResponseDto> getAllUrls(){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
 
         return urlRepo.findAllUrlByUserSortedByCreatedAtDesc(user)
                 .stream()
@@ -48,13 +48,13 @@ public class UrlService {
     public ShortenUrlResponseDto shortenUrl(ShortenUrlRequestDto request){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new ForbiddenAccessException("Authenticated user no longer exists."));
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
 
         var saved = urlRepo.save(
                 Url.builder()
                         .originalUrl(request.getOriginalUrl())
                         .isActive(true)
-                        .maxClick(1)
+                        .maxClick(request.getMaxClick())
                         .password(request.getPassword())
                         .expirationDate(request.getExpirationDate())
                         .totalClicked(0)
@@ -68,6 +68,7 @@ public class UrlService {
 
         return ShortenUrlResponseDto.builder()
                 .originalUrl(saved.getOriginalUrl())
+                .maxClick(saved.getMaxClick())
                 .shortUrl(saved.getShortUrl())
                 .expirationDate(saved.getExpirationDate())
                 .success(true)
@@ -79,7 +80,7 @@ public class UrlService {
     public DeleteUrlResponseDto deleteUrl(Long id) {
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new ForbiddenAccessException("User not found."));
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
 
         var url = urlRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
@@ -93,7 +94,7 @@ public class UrlService {
     public UpdateUrlResponseDto updateUrl(UpdateUrlRequestDto update, Long id){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new ForbiddenAccessException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
 
         var url = urlRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
@@ -104,11 +105,16 @@ public class UrlService {
         var oldUrl = url.getOriginalUrl();
 
         url.setOriginalUrl(update.getOriginalUrl());
+        url.setExpirationDate(update.getExpirationDate());
+        url.setPassword(update.getPassword());
+        url.setMaxClick(update.getMaxClick());
 
         var updatedUrl = urlRepo.save(url);
 
         return UpdateUrlResponseDto.builder()
                 .oldLongUrl(oldUrl)
+                .expirationDate(updatedUrl.getExpirationDate())
+                .maxClick(updatedUrl.getMaxClick())
                 .updatedLongUrl(updatedUrl.getOriginalUrl())
                 .message("success")
                 .build();
@@ -119,7 +125,7 @@ public class UrlService {
     public GetUrlResponseDto getUrlById(Long id){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new ForbiddenAccessException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
 
         var url = urlRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));

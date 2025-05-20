@@ -15,6 +15,8 @@ public class ShortenUrlResponseDto {
 
     private boolean success;
 
+    private Integer maxClick;
+
     private String shortUrl;
 
     private String originalUrl;

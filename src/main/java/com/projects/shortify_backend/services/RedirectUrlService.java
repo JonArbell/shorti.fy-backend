@@ -28,8 +28,8 @@ public class RedirectUrlService {
     @Transactional
     public String getOriginalUrlByShortUrl(String shortUrl, HttpServletRequest request){
 
-        String ip = getClientIp(request);
-        String userAgent = request.getHeader("User-Agent");
+        var ip = getClientIp(request);
+        var userAgent = request.getHeader("User-Agent");
 
         var findVisitor = visitorRepo.findByIpAddress(ip).orElseGet(() ->
                 visitorRepo.save(

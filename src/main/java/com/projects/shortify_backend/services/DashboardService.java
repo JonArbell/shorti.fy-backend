@@ -3,6 +3,8 @@ package com.projects.shortify_backend.services;
 import com.projects.shortify_backend.dto.UrlResponseDto;
 import com.projects.shortify_backend.dto.dashboard.DashboardResponseDto;
 import com.projects.shortify_backend.dto.dashboard.RecentVisitsResponseDto;
+import com.projects.shortify_backend.exception.custom.UserNotFoundException;
+import com.projects.shortify_backend.repository.UserRepo;
 import com.projects.shortify_backend.repository.VisitRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 public class DashboardService {
 
     private final UrlService urlService;
+
+    private final UserRepo userRepo;
 
     private final AuthenticationService authenticationService;
 
@@ -46,7 +50,11 @@ public class DashboardService {
 
     @Transactional
     public List<RecentVisitsResponseDto> recentVisits(){
-        return visitRepo.findTop5RecentVisitsByeEmail(authenticationService.getCurrentUserEmail(), PageRequest.of(0,5))
+
+        var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
+
+        return visitRepo.findTop5RecentVisitsByeEmail(user.getEmail(), PageRequest.of(0,5))
                 .stream()
                 .map(visit -> RecentVisitsResponseDto.builder()
                         .id(visit.getId())

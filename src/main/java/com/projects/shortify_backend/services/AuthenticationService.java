@@ -6,6 +6,7 @@ import com.projects.shortify_backend.dto.SignupRequestDto;
 import com.projects.shortify_backend.dto.SignupResponseDto;
 import com.projects.shortify_backend.entities.User;
 import com.projects.shortify_backend.exception.custom.EmailAlreadyExistsException;
+import com.projects.shortify_backend.exception.custom.UnauthorizedAccessException;
 import com.projects.shortify_backend.repository.UserRepo;
 import com.projects.shortify_backend.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -33,7 +33,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     public String getCurrentUserEmail() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated() || authentication.getName() == null)
+            throw new UnauthorizedAccessException("You're not authenticated.");
+
+        return authentication.getName();
     }
 
     @Transactional
@@ -58,12 +63,12 @@ public class AuthenticationService {
 
     public SignInResponseDto signIn(SignInRequestDto request){
 
-        var auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
-                request.getPassword()));
+        var auth = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         var userDetails = (UserDetails) auth.getPrincipal();
 
-        if(!(userDetails instanceof User user)) throw new RuntimeException("Authentication Failed");
+        if(!(userDetails instanceof User)) throw new RuntimeException("Authentication Failed");
 
         var token = jwtService.generateToken(auth, Instant.now().plusSeconds(1600));
 

@@ -16,6 +16,8 @@ public class ShortenUrlRequestDto {
 
     private String password;
 
+    private Integer maxClick;
+
     private LocalDate expirationDate;
 
 }
