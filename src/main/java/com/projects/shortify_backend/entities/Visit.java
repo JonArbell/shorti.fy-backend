@@ -21,7 +21,7 @@ public class Visit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime visitedAt;
+    private LocalDateTime latestVisitedAt;
 
     private Integer numberOfClicks;
 

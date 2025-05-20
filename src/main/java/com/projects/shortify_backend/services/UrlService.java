@@ -10,8 +10,11 @@ import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -139,5 +142,19 @@ public class UrlService {
                 .id(url.getId())
                 .password(url.getPassword())
                 .build();
+    }
+
+    @Scheduled(cron = "0 0 * * * *") // Every hour
+    public void deactivateExpiredUrls() {
+
+        var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
+                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
+
+        List<Url> expired = urlRepo.findAllByUserAndExpirationDateBeforeAndIsActiveIsTrue(user,LocalDate.now());
+        for (var url : expired) {
+            url.setActive(false);
+        }
+
+        urlRepo.saveAll(expired);
     }
 }

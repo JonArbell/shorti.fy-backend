@@ -9,8 +9,11 @@ import com.projects.shortify_backend.repository.VisitorRepo;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 
@@ -53,19 +56,21 @@ public class RedirectUrlService {
 
         findUrl.setTotalClicked(numberOfClicks + 1);
 
-        if(findUrl.getTotalClicked().equals(findUrl.getMaxClick())) findUrl.setActive(false);
+        if(findUrl.getTotalClicked().equals(findUrl.getMaxClick()) ||
+                (findUrl.getExpirationDate() != null && LocalDate.now().isAfter(findUrl.getExpirationDate()))
+        ) findUrl.setActive(false);
 
         urlRepo.save(findUrl);
 
         visitRepo.findByUrlAndVisitor(findUrl, findVisitor)
             .ifPresentOrElse(visit ->{
                 visit.setNumberOfClicks(visit.getNumberOfClicks() + 1);
-
+                visit.setLatestVisitedAt(LocalDateTime.now());
                 visitRepo.save(visit);
             }, () -> visitRepo.save(
                     Visit.builder()
                             .url(findUrl)
-                            .visitedAt(LocalDateTime.now())
+                            .latestVisitedAt(LocalDateTime.now())
                             .numberOfClicks(1)
                             .visitor(findVisitor)
                             .build()

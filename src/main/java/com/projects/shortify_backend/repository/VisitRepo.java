@@ -1,7 +1,6 @@
 package com.projects.shortify_backend.repository;
 
 import com.projects.shortify_backend.entities.Url;
-import com.projects.shortify_backend.entities.User;
 import com.projects.shortify_backend.entities.Visit;
 import com.projects.shortify_backend.entities.Visitor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,7 +18,7 @@ public interface VisitRepo extends JpaRepository<Visit, Long> {
         SELECT v 
         FROM Visit v 
         WHERE v.url.user.email = :email 
-        ORDER BY v.visitedAt DESC
+        ORDER BY v.latestVisitedAt DESC
     """)
     List<Visit> findTop5RecentVisitsByeEmail(@Param("email") String email, Pageable pageable);
 
