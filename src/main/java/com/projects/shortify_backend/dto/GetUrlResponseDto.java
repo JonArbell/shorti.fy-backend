@@ -19,6 +19,8 @@ public class GetUrlResponseDto {
 
     private String password;
 
+    private Integer maxClick;
+
     private LocalDate expirationDate;
 
 }

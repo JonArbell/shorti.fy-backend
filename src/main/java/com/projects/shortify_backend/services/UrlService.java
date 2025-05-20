@@ -130,9 +130,12 @@ public class UrlService {
         var url = urlRepo.findByIdAndUser(id, user)
                 .orElseThrow(() -> new UrlNotFoundException("URL not found or doesn't belong to the user."));
 
+        var maxClick = url.getMaxClick();
+
         return GetUrlResponseDto.builder()
                 .originalUrl(url.getOriginalUrl())
                 .expirationDate(url.getExpirationDate())
+                .maxClick(maxClick == 0 ? null : maxClick)
                 .id(url.getId())
                 .password(url.getPassword())
                 .build();
