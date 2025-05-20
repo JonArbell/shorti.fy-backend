@@ -48,7 +48,7 @@ public class UrlController {
     }
 
     @GetMapping("/my-urls/{id}")
-    public ResponseEntity<GetUrlResponseDto> getUrlById(@PathVariable Long id){
+    public ResponseEntity<UrlResponseDto> getUrlById(@PathVariable Long id){
 
         return new ResponseEntity<>(urlService.getUrlById(id),HttpStatus.OK);
     }

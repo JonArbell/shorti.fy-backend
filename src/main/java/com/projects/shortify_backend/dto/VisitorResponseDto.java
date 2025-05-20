@@ -5,22 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetUrlResponseDto {
+public class VisitorResponseDto {
 
-    private Long id;
+    private String ipAddress;
 
-    private String originalUrl;
+    private String deviceType;
 
-    private String password;
-
-    private Integer maxClick;
-
-    private LocalDate expirationDate;
-
+    private LocalDateTime latestVisitedAt;
 }

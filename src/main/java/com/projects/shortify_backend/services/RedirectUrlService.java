@@ -6,6 +6,7 @@ import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.VisitRepo;
 import com.projects.shortify_backend.repository.VisitorRepo;
+import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,8 @@ public class RedirectUrlService {
     public String getOriginalUrlByShortUrl(String shortUrl, HttpServletRequest request){
 
         var ip = getClientIp(request);
-        var userAgent = request.getHeader("User-Agent");
+
+        var userAgent = getDeviceType(request);
 
         var findVisitor = visitorRepo.findByIpAddress(ip).orElseGet(() ->
                 visitorRepo.save(
@@ -82,6 +84,14 @@ public class RedirectUrlService {
         log.info("URL Total Clicked : {}", findUrl.getTotalClicked());
 
         return findUrl.getOriginalUrl();
+    }
+
+    private String getDeviceType(HttpServletRequest request) {
+        String userAgentString = request.getHeader("User-Agent");
+        var userAgent = UserAgent.parseUserAgentString(userAgentString);
+        var deviceType = userAgent.getOperatingSystem().getDeviceType();
+
+        return deviceType.getName();
     }
 
     private String getClientIp(HttpServletRequest request) {

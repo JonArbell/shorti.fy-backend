@@ -8,12 +8,12 @@ import com.projects.shortify_backend.exception.custom.UrlNotFoundException;
 import com.projects.shortify_backend.exception.custom.UserNotFoundException;
 import com.projects.shortify_backend.repository.UrlRepo;
 import com.projects.shortify_backend.repository.UserRepo;
+import com.projects.shortify_backend.repository.VisitRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,6 +26,8 @@ public class UrlService {
 
     private final UrlRepo urlRepo;
     private final UserRepo userRepo;
+
+    private final VisitRepo visitRepo;
     private final AuthenticationService authenticationService;
 
     @Transactional
@@ -37,7 +39,7 @@ public class UrlService {
         return urlRepo.findAllUrlByUserSortedByCreatedAtDesc(user)
                 .stream()
                 .map(url -> UrlResponseDto.builder()
-                        .numberOfClicks(url.getMaxClick())
+                        .maxClick(url.getMaxClick())
                         .id(url.getId())
                         .shortUrl(url.getShortUrl())
                         .isActive(url.isActive())
@@ -125,7 +127,7 @@ public class UrlService {
     }
 
     @Transactional
-    public GetUrlResponseDto getUrlById(Long id){
+    public UrlResponseDto getUrlById(Long id){
 
         var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
                 .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
@@ -135,22 +137,32 @@ public class UrlService {
 
         var maxClick = url.getMaxClick();
 
-        return GetUrlResponseDto.builder()
-                .originalUrl(url.getOriginalUrl())
-                .expirationDate(url.getExpirationDate())
+        var visitors = visitRepo.findAllByUrl(url)
+                .stream()
+                .map(visit -> VisitorResponseDto.builder()
+                        .ipAddress(visit.getVisitor().getIpAddress())
+                        .deviceType(visit.getVisitor().getDeviceType())
+                        .latestVisitedAt(visit.getLatestVisitedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return UrlResponseDto.builder()
                 .maxClick(maxClick == 0 ? null : maxClick)
-                .id(url.getId())
                 .password(url.getPassword())
+                .expirationDate(url.getExpirationDate())
+                .shortUrl(url.getShortUrl())
+                .originalUrl(url.getOriginalUrl())
+                .id(url.getId())
+                .isActive(url.isActive())
+                .totalClicked(url.getTotalClicked())
+                .visitorResponseDtoList(visitors)
                 .build();
     }
 
     @Scheduled(cron = "0 0 * * * *") // Every hour
     public void deactivateExpiredUrls() {
 
-        var user = userRepo.findByEmail(authenticationService.getCurrentUserEmail())
-                .orElseThrow(() -> new UserNotFoundException("User not authenticated or does not exist."));
-
-        List<Url> expired = urlRepo.findAllByUserAndExpirationDateBeforeAndIsActiveIsTrue(user,LocalDate.now());
+        List<Url> expired = urlRepo.findAllByExpirationDateBeforeAndIsActiveIsTrue(LocalDate.now());
         for (var url : expired) {
             url.setActive(false);
         }

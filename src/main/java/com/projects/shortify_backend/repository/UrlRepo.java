@@ -24,5 +24,5 @@ public interface UrlRepo extends JpaRepository<Url, Long> {
     @Query("SELECT v FROM Url v WHERE v.shortUrl = :shortUrl")
     Optional<Url> findByShortUrl(@Param("shortUrl") String shortUrl);
 
-    List<Url> findAllByUserAndExpirationDateBeforeAndIsActiveIsTrue(User user, LocalDate date);
+    List<Url> findAllByExpirationDateBeforeAndIsActiveIsTrue(LocalDate date);
 }
