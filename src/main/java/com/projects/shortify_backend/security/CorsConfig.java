@@ -18,7 +18,8 @@ public class CorsConfig {
         var domains = List.of(
                 "http://localhost:4200",
                 "http://192.168.0.102:4200",
-                "https://s-fy.netlify.app"
+                "http://192.168.110.7:4200",
+                "https://s-fy.netlify.app/"
         );
 
         // 🔓 Public CORS config (no auth header required)
