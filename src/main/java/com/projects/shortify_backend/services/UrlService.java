@@ -60,7 +60,7 @@ public class UrlService {
                         .originalUrl(request.getOriginalUrl())
                         .isActive(true)
                         .maxClick(request.getMaxClick())
-                        .password(request.getPassword())
+                        .password("".equals(request.getPassword()) ? null : request.getPassword())
                         .expirationDate(request.getExpirationDate())
                         .totalClicked(0)
                         .shortUrl(Base62Encoder.encode(request.getOriginalUrl().length()))
